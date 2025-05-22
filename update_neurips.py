@@ -35,7 +35,7 @@ yaml = YAML(typ='rt') # rt for round-trip, preserves comments/style
 yaml.representer.add_representer(str, str_presenter) # Correct way to add representer for str
 yaml.indent(mapping=2, sequence=4, offset=2) 
 yaml.preserve_quotes = True
-yaml.width = 4096 
+yaml.width = 4096 # Prevent line wrapping for long strings like links
 
 try:
     conferences_data = yaml.load(yaml_data_str)
