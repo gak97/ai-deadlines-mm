@@ -1,0 +1,4 @@
+PyYAML
+duckduckgo-search
+requests
+beautifulsoup4
