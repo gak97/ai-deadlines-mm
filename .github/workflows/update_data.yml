@@ -1,0 +1,42 @@
+name: Update Conference Deadlines
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # At 00:00 on the 1st day of every month
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  update_deadlines:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push changes back to the repo
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4 # Using v4, common practice
+
+      - name: Set up Python
+        uses: actions/setup-python@v4 # Using v4
+        with:
+          python-version: '3.10' # Consistent with script testing environment
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Run Python Script to Update Conference Data
+        run: python update_conferences.py
+
+      - name: Check for Changes
+        id: check_changes
+        run: |
+          git diff --quiet _data/conferences.yml || echo "changed=true" >> $GITHUB_ENV
+
+      - name: Commit and Push Changes
+        if: env.changed == 'true'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add _data/conferences.yml
+          git commit -m "Automated update of conference deadlines"
+          git push origin HEAD:${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Implicitly available, but good to be aware for permissions
