@@ -51,8 +51,8 @@
 - title: ICML
   year: 2026
   id: icml26
-  link: https://icml.cc/Conferences/FutureMeetings
-  deadline: TODO
+  link: https://ciliphlg.com/icml-2026/
+  deadline: for abstracts is 31st July 2025
   abstract_deadline: null
   timezone: UTC-12
   place: TODO
@@ -60,7 +60,7 @@
   start: TODO
   end: TODO
   sub: TODO
-  note: 'Scraped from https://icml.cc/Conferences/FutureMeetings. CFP: https://icml.cc/Conferences/2025/CallForPapers'
+  note: Scraped from https://ciliphlg.com/icml-2026/
 - title: NeurIPS
   year: 2026
   id: neurips26
@@ -103,7 +103,7 @@
 - title: NeurIPS
   year: 2027
   id: neurips27
-  link: https://neurips.cc/Register/view-registration
+  link: https://neurips.cc/Conferences/FutureMeetings
   deadline: TODO
   abstract_deadline: null
   timezone: UTC-12
@@ -112,4 +112,4 @@
   start: TODO
   end: TODO
   sub: TODO
-  note: 'Scraped from https://neurips.cc/Register/view-registration. CFP: https://neurips.cc/Conferences/2025/CallForPapers'
+  note: 'Scraped from https://neurips.cc/Conferences/FutureMeetings. CFP: https://neurips.cc/Conferences/2025/CallForPapers'
