@@ -30,38 +30,43 @@ jobs:
 
       - name: Deploy built site
         run: |
-          # This command stages all files in _site, then moves them to the root,
-          # then commits any changes.
-          # The GITHUB_SHA is used to avoid an infinite loop of workflow triggers if possible.
-          # The current commit SHA
-          CURRENT_SHA=$(git rev-parse HEAD)
-
           # Configure Git
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-          # Add _site contents to a temporary index
-          git add -f _site
+          # Clean the working directory except for .git, .github, and other essentials.
+          # This prepares for a clean copy of the _site contents.
+          # IMPORTANT: List any files or directories at the root level that are NOT part of the
+          # Jekyll _site output but MUST be preserved on the gh-pages branch.
+          # For example, if you have CNAME, README.md, update_conferences.py, requirements.txt,
+          # Gemfile, Gemfile.lock, _data/ etc. at the root, they should be preserved.
+          # The current script assumes that everything not in _site should be replaced.
+          # A better approach is to specify what to keep.
+          
+          # Create a temporary directory for the new site
+          mkdir ../_site_temp
+          cp -R _site/* ../_site_temp/
+          
+          # Clean current directory - BE CAREFUL WITH THIS COMMAND
+          # This will remove everything except .git and .github (and files specified in the find command)
+          # Add any other files/dirs you need to preserve in the -not -path arguments
+          git ls-files | grep -vE '^(\.git|\.github)' | xargs -r rm -f
+          find . -maxdepth 1 -type d -not -name '.' -not -name '.git' -not -name '.github' -not -name '_data' -exec rm -rf {} +
+          find . -maxdepth 1 -type f -not -name 'README.md' -not -name 'CNAME' -not -name 'Gemfile' -not -name 'Gemfile.lock' -not -name 'update_conferences.py' -not -name 'requirements.txt' -exec rm -f {} +
 
-          # Perform a tree diff to see if _site contents are different from current root
-          # This is a bit complex, an easier way is to just try to commit and see if it makes changes.
-          # For simplicity, we'll assume if the build runs, there might be changes.
-          # A more robust check would be `git diff-index --quiet HEAD -- _site/` after `git add -f _site`
-          # but that requires more complex scripting to get right with directory contents.
 
-          # Use rsync to copy contents of _site to root, deleting old files from root
-          # that are not in the new _site. This makes the root a mirror of _site.
-          # The --delete flag is important here.
-          # We need to make sure we don't delete the .git directory or .github directory.
-          rsync -av --delete --exclude ".git" --exclude ".github" _site/ .
+          # Copy the new site from the temporary directory
+          cp -R ../_site_temp/* .
+          rm -rf ../_site_temp
 
-          # Add all changes, including deletions in the root that were not in _site
+          # Add all changes (new files, deleted files)
           git add -A
 
-          # Check if there are any changes to commit
+          # Commit and push if there are changes
           if ! git diff-index --quiet HEAD; then
-            git commit -m "Deploy Jekyll site from Action (commit ${CURRENT_SHA})"
+            echo "Committing and pushing changes..."
+            git commit -m "Deploy Jekyll site to gh-pages (from $(git rev-parse --short HEAD))"
             git push origin gh-pages
           else
             echo "No changes to deploy."
-          
+          fi
