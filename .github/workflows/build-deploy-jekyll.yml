@@ -6,10 +6,10 @@ on:
       - gh-pages
 
 permissions:
-  contents: write # Allow pushing to the gh-pages branch
+  contents: write
 
 concurrency:
-  group: "pages"
+  group: "gh-pages-build"
   cancel-in-progress: true
 
 jobs:
@@ -22,25 +22,46 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0' # Compatible with Jekyll 3.9.x
+          ruby-version: '3.0'
           bundler-cache: true # Runs bundle install and caches gems
 
       - name: Build Jekyll Site
         run: bundle exec jekyll build --baseurl "/ai-deadlines-mm"
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
-          # The source branch is gh-pages and the publish branch is also gh-pages.
-          # This means the built site will be committed to the gh-pages branch.
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          # force_orphan: true # Optional: uncomment if a clean history is desired for the site content
-          # commit_message: 'Deploy Jekyll site to Pages' # Optional: custom commit message
-          # By default, this action pushes to the 'gh-pages' branch.
-          # Since this workflow runs ON push to gh-pages, this effectively updates the branch with the built site.
-          # For this setup, explicitly setting `publish_branch: gh-pages` is redundant but can be added for clarity.
-          # publish_branch: gh-pages # Default is gh-pages
-          # keep_files: false # Default is false, ensures old files are removed from publish_dir
+      - name: Deploy built site
+        run: |
+          # This command stages all files in _site, then moves them to the root,
+          # then commits any changes.
+          # The GITHUB_SHA is used to avoid an infinite loop of workflow triggers if possible.
+          # The current commit SHA
+          CURRENT_SHA=$(git rev-parse HEAD)
+
+          # Configure Git
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # Add _site contents to a temporary index
+          git add -f _site
+
+          # Perform a tree diff to see if _site contents are different from current root
+          # This is a bit complex, an easier way is to just try to commit and see if it makes changes.
+          # For simplicity, we'll assume if the build runs, there might be changes.
+          # A more robust check would be `git diff-index --quiet HEAD -- _site/` after `git add -f _site`
+          # but that requires more complex scripting to get right with directory contents.
+
+          # Use rsync to copy contents of _site to root, deleting old files from root
+          # that are not in the new _site. This makes the root a mirror of _site.
+          # The --delete flag is important here.
+          # We need to make sure we don't delete the .git directory or .github directory.
+          rsync -av --delete --exclude ".git" --exclude ".github" _site/ .
+
+          # Add all changes, including deletions in the root that were not in _site
+          git add -A
+
+          # Check if there are any changes to commit
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Deploy Jekyll site from Action (commit ${CURRENT_SHA})"
+            git push origin gh-pages
+          else
+            echo "No changes to deploy."
+          
