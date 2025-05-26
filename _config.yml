@@ -3,7 +3,8 @@ description: Countdowns to top CV/NLP/ML/Robotics/AI conference deadlines
 author: Abhishek Das
 
 domain: "aideadlin.es"
-baseurl: ""
+url: "https://gak97.github.io"
+baseurl: "/ai-deadlines-mm"
 
 twitter_hashtag: machinelearning
 github_username: paperswithcode
