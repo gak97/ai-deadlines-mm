@@ -1,0 +1,46 @@
+name: Build and Deploy Jekyll Site
+
+on:
+  push:
+    branches:
+      - gh-pages
+
+permissions:
+  contents: write # Allow pushing to the gh-pages branch
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0' # Compatible with Jekyll 3.9.x
+          bundler-cache: true # Runs bundle install and caches gems
+
+      - name: Build Jekyll Site
+        run: bundle exec jekyll build --baseurl "/ai-deadlines-mm"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          # The source branch is gh-pages and the publish branch is also gh-pages.
+          # This means the built site will be committed to the gh-pages branch.
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          # force_orphan: true # Optional: uncomment if a clean history is desired for the site content
+          # commit_message: 'Deploy Jekyll site to Pages' # Optional: custom commit message
+          # By default, this action pushes to the 'gh-pages' branch.
+          # Since this workflow runs ON push to gh-pages, this effectively updates the branch with the built site.
+          # For this setup, explicitly setting `publish_branch: gh-pages` is redundant but can be added for clarity.
+          # publish_branch: gh-pages # Default is gh-pages
+          # keep_files: false # Default is false, ensures old files are removed from publish_dir
