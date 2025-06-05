@@ -71,6 +71,18 @@ We hope this automated system enhances the timeliness and accuracy of the confer
 - [se-deadlines.github.io (Software engineering conferences)][20] by @sivanahamer and @imranur-rahman
 - [awesome-mlss (Machine Learning Summer Schools)][21] by @sshkhr and @gmberton
 
+## Building the Site Locally
+
+This project uses [Jekyll](https://jekyllrb.com/) to generate the static
+site. Install the Ruby gems and build the site with:
+
+```bash
+bundle install
+bundle exec jekyll build --baseurl "/ai-deadlines-mm"
+```
+
+The generated files will appear in the `_site` directory.
+
 ## License
 
 This project is licensed under [MIT][1].
