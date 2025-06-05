@@ -42,10 +42,14 @@ def identify_target_conferences(conference_data):
     # This part might need adjustment based on how we want to discover *new* conference series.
     if not seen_titles:
         # Fallback: if conferences.yml is empty or has no titles,
-        # we might want to search for some default well-known conferences.
-        # For this task, we assume conferences.yml has data.
-        print("No existing conference titles found. This script currently relies on existing titles to search for updates.")
-        # Example: seen_titles.update(["NeurIPS", "ICML", "CVPR", "ACL", "AISTATS"])
+        # use a list of well-known AI conferences so the script can
+        # bootstrap a fresh dataset. This prevents the updater from
+        # immediately exiting on a new repo checkout.
+        print(
+            "No existing conference titles found. Using default conference list "
+            "to bootstrap data."
+        )
+        seen_titles.update(["NeurIPS", "ICML", "AISTATS", "CVPR", "ACL"])
 
     for title in seen_titles:
         for year in YEARS_TO_SEARCH:
