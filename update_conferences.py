@@ -4,9 +4,14 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 import os
+import re
+import time # Added for delay
+from dateutil import parser as date_parser
+from dateutil.parser import ParserError
 
 # Constants
 CONFERENCES_FILE = "_data/conferences.yml"
+SEARCH_DELAY_SECONDS = 2 # Delay between DDG searches
 CURRENT_YEAR = datetime.datetime.now().year
 YEARS_TO_SEARCH = [CURRENT_YEAR + 1, CURRENT_YEAR + 2]
 
@@ -49,11 +54,13 @@ def identify_target_conferences(conference_data):
             "No existing conference titles found. Using default conference list "
             "to bootstrap data."
         )
-        seen_titles.update(["NeurIPS", "ICML", "AISTATS", "CVPR", "ACL"])
+        # Add AAAI to the default list for bootstrapping
+        seen_titles.update(["NeurIPS", "ICML", "AISTATS", "CVPR", "ACL", "AAAI"])
 
     for title in seen_titles:
-        for year in YEARS_TO_SEARCH:
-            targets.append({"title": title, "year": year})
+        for year_to_search in YEARS_TO_SEARCH:
+            targets.append({"title": title, "year": year_to_search})
+
     print(f"Identified {len(targets)} target conference instances to search.")
     return targets
 
@@ -98,104 +105,294 @@ def scrape_conference_info(url, conference_title, year):
             # Pass for now, maybe some sites don't mention it prominently.
             pass
 
-        def find_info(keywords, default_val="TODO"):
+        def parse_date_range(date_str_in, year_context):
+            """
+            Parses a date string which might be a range (e.g., "Jan 20-27, 2026", "20-27 January 2026")
+            Returns (start_date, end_date) as YYYY-MM-DD strings or (None, None) if parsing fails.
+            """
+            if not date_str_in or any(tba.lower() in date_str_in.lower() for tba in ["tba", "tbd", "announced soon", "coming soon"]):
+                return None, None
+
+            date_str_in = date_str_in.replace("–", "-").replace("—", "-") # Normalize dashes
+
+            # Common patterns:
+            # 1. Month Day-Day, Year (e.g., January 20-27, 2026)
+            # 2. Day-Day Month Year (e.g., 20-27 January 2026)
+            # 3. Month Day - Month Day, Year (e.g. January 20 - February 2, 2026)
+            # 4. Month Day, Year - Month Day, Year (e.g. January 20, 2026 - January 27, 2026)
+            # 5. Month Day (assume current year_context if not specified, then cross-check)
+
+            start_date_obj, end_date_obj = None, None
+
+            try:
+                # Try direct parsing if it's a single date or already well-formed range
+                # date_parser is good but might misinterpret "Jan 20-27" without context
+                # Add year context if missing in parts of the string
+                if str(year_context) not in date_str_in:
+                    date_str_with_year = f"{date_str_in}, {year_context}"
+                else:
+                    date_str_with_year = date_str_in
+
+                # Pattern 1 & 2: "Month Day1-Day2, Year" or "Day1-Day2 Month Year"
+                # e.g. "January 20-27, 2026", "20-27 January 2026"
+                match_month_day_range = re.search(r"([a-zA-Z]+)\s*(\d{1,2})\s*-\s*(\d{1,2})\s*,?\s*(\d{4})", date_str_in, re.IGNORECASE)
+                if not match_month_day_range:
+                     match_day_range_month = re.search(r"(\d{1,2})\s*-\s*(\d{1,2})\s*([a-zA-Z]+)\s*,?\s*(\d{4})", date_str_in, re.IGNORECASE)
+                     if match_day_range_month:
+                         # Reformat to Month Day-Day, Year for consistent parsing by date_parser
+                         # Example: "20-27 January 2026" -> "January 20-27 2026"
+                         m = match_day_range_month.groups()
+                         date_str_with_year = f"{m[2]} {m[0]}-{m[1]}, {m[3]}"
+
+
+                # More complex range: "Month1 Day1 - Month2 Day2, Year" or "Month Day1, Year1 - Month Day2, Year2"
+                # Split by common range separators like " - "
+                parts = re.split(r'\s+-\s+', date_str_with_year)
+                if len(parts) == 2:
+                    start_str, end_str = parts[0].strip(), parts[1].strip()
+
+                    # If end_str is just a day, it implies same month and year as start_str
+                    # e.g. "January 20 - 27, 2026"
+                    if re.match(r"^\d{1,2}$", end_str) and str(year_context) in start_str: # "27"
+                         # find month in start_str
+                        start_month_match = re.search(r"([a-zA-Z]+)", start_str)
+                        if start_month_match:
+                            end_str = f"{start_month_match.group(1)} {end_str}, {year_context}"
+
+                    # If end_str has month but no year, use year from start_str or year_context
+                    # e.g., "January 20 - February 2, 2026" (year is already there)
+                    # or "Jan 20, 2026 - Feb 2"
+                    if not re.search(r"\d{4}", end_str): # No year in end_str
+                        year_in_start = re.search(r"(\d{4})", start_str)
+                        if year_in_start:
+                            end_str = f"{end_str}, {year_in_start.group(1)}"
+                        else: # fallback to general year context
+                            end_str = f"{end_str}, {year_context}"
+
+                    # If start_str has no year, add from end_str or year_context
+                    if not re.search(r"\d{4}", start_str):
+                        year_in_end = re.search(r"(\d{4})", end_str)
+                        if year_in_end:
+                             start_str = f"{start_str}, {year_in_end.group(1)}"
+                        else: # fallback to general year context
+                             start_str = f"{start_str}, {year_context}"
+
+                    try:
+                        start_date_obj = date_parser.parse(start_str)
+                        end_date_obj = date_parser.parse(end_str)
+                    except ParserError:
+                        # Fallback to trying to parse the whole string if split logic failed
+                        start_date_obj, end_date_obj = None, None # reset
+
+                if not start_date_obj: # If not parsed by range logic above, try to parse the reconstructed string
+                    try:
+                        # Attempt to parse the most complete date string we've constructed so far
+                        # This will handle single dates or well-formed date strings that don't fit explicit range regexes
+                        start_date_obj = date_parser.parse(date_str_with_year)
+                        end_date_obj = start_date_obj # Assume single day if only one date parsed this way
+                        print(f"Parsed as single date: {start_date_obj} from '{date_str_with_year}'")
+
+                        # Check if the original input string `date_str_in` looks more like a range
+                        # that `date_parser.parse` might have only partially understood.
+                        # This is a simplified check.
+                        if '-' in date_str_in and start_date_obj:
+                            # Try to see if we can parse a start and end from the original with more explicit regex
+                            # This is a re-attempt at range parsing if the initial split failed but a dash is present.
+                            # Example: "January 20-27, 2026" might be parsed as Jan 20 by default by `parse`.
+                            # We need to guide it for ranges.
+
+                            # Simplified regex for "Month Day-Day, Year" or "Day-Day Month Year"
+                            # These are similar to what was tried before parts = re.split(...)
+                            # This section is to catch cases where date_str_with_year might have been simplified too much
+                            # or the split logic wasn't robust enough.
+
+                            # Try "Month Day1-Day2, Year"
+                            r_match = re.search(r"([a-zA-Z]+)\s*(\d{1,2})\s*-\s*(\d{1,2})(?:st|nd|rd|th)?\s*,?\s*(\d{4})", date_str_in, re.IGNORECASE)
+                            if r_match:
+                                month, day1, day2, year_val = r_match.groups()
+                                start_date_obj = date_parser.parse(f"{month} {day1}, {year_val}")
+                                end_date_obj = date_parser.parse(f"{month} {day2}, {year_val}")
+                                print(f"Re-parsed range (Month Day-Day, Year): {start_date_obj} to {end_date_obj}")
+                            else:
+                                # Try "Day1-Day2 Month Year"
+                                r_match = re.search(r"(\d{1,2})\s*-\s*(\d{1,2})(?:st|nd|rd|th)?\s*([a-zA-Z]+)\s*,?\s*(\d{4})", date_str_in, re.IGNORECASE)
+                                if r_match:
+                                    day1, day2, month, year_val = r_match.groups()
+                                    start_date_obj = date_parser.parse(f"{month} {day1}, {year_val}")
+                                    end_date_obj = date_parser.parse(f"{month} {day2}, {year_val}")
+                                    print(f"Re-parsed range (Day-Day Month Year): {start_date_obj} to {end_date_obj}")
+
+                    except (ParserError, TypeError, ValueError) as e_parse_single:
+                        print(f"Could not parse date string '{date_str_in}' (tried as '{date_str_with_year}'): {e_parse_single}")
+                        return None, None
+
+            except (ParserError, TypeError, ValueError) as e_main: # Errors from initial attempts like re.split or early parse calls
+                print(f"Error during main date string processing for '{date_str_in}': {e_main}")
+                return None, None
+
+            if start_date_obj and end_date_obj:
+                # Validate year: if parsed year is far from context, it's likely an error or different event
+                if abs(start_date_obj.year - year_context) > 2 or abs(end_date_obj.year - year_context) > 2:
+                    # Allow one year off for conferences spanning New Year or announced very early/late
+                    if not (abs(start_date_obj.year - year_context) <=1 and abs(end_date_obj.year - year_context) <=1 ):
+                        print(f"Parsed date {start_date_obj.strftime('%Y-%m-%d')} - {end_date_obj.strftime('%Y-%m-%d')} year mismatch with context {year_context}. Discarding.")
+                        return None, None
+                return start_date_obj.strftime('%Y-%m-%d'), end_date_obj.strftime('%Y-%m-%d')
+
+            return None, None
+
+
+        def find_info(keywords, soup_doc, year_context_for_date, find_date_format=False):
+            default_val = "TODO"
             for keyword in keywords:
                 try:
                     # Search for keyword in text, then try to get its parent or sibling text
-                    # This is extremely naive. A real scraper would use specific element selectors.
-                    found_elements = soup.find_all(string=lambda t: t and keyword in t.lower())
+                    found_elements = soup_doc.find_all(string=lambda t: t and keyword in t.lower())
                     for el in found_elements:
-                        # Try to get a meaningful chunk of text around the keyword.
-                        # Heuristic: look at parent, and siblings.
-                        # This needs to be much more robust for a real-world scraper.
                         potential_text_sources = [el.parent, el.parent.next_sibling, el.parent.previous_sibling]
+                        if el.parent and el.parent.parent: # Look up two levels
+                            potential_text_sources.append(el.parent.parent)
+
                         for source_element in potential_text_sources:
                             if source_element and hasattr(source_element, 'get_text'):
                                 parent_text = source_element.get_text(separator=' ', strip=True)
-                                # Clean up text: remove excessive newlines/spaces
-                                parent_text = ' '.join(parent_text.split())
-                                if len(parent_text) > len(keyword) and len(parent_text) < 250: # Increased length limit
-                                    # Check if the year is also mentioned nearby, increasing confidence
-                                    # Also check for terms that might indicate it's the *correct* kind of info
-                                    # (e.g., for "deadline", words like "date", "submission", specific months)
-                                    if str(year) in parent_text or any(month in parent_text.lower() for month in ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]):
-                                        # Attempt to extract a more specific phrase rather than the whole parent_text
-                                        # Try to find the sentence containing the keyword.
-                                        # This is still very basic.
-                                        sentences = parent_text.split('.') # Naive sentence split
+                                parent_text_cleaned = ' '.join(parent_text.split())
+
+                                if len(parent_text_cleaned) > len(keyword) and len(parent_text_cleaned) < 350: # Increased length limit
+                                    # Check if the year is also mentioned nearby or a month, increasing confidence
+                                    contains_year = str(year_context_for_date) in parent_text_cleaned
+                                    contains_month = any(month in parent_text_cleaned.lower() for month in ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"])
+
+                                    if contains_year or contains_month or find_date_format: # More lenient if we are specifically looking for dates
+                                        sentences = parent_text_cleaned.split('.')
                                         for sentence in sentences:
-                                            if keyword in sentence.lower():
-                                                extracted_phrase = sentence.strip()
-                                                # Try to get a more specific snippet
-                                                kw_idx = sentence.lower().find(keyword)
-                                                # Look for text immediately following the keyword, common for deadlines/dates
-                                                # e.g., "Deadline: September 1st" or "Location: Paris"
-                                                snippet_after_keyword = sentence[kw_idx + len(keyword):].strip()
-                                                # Remove leading colons, spaces
-                                                snippet_after_keyword = snippet_after_keyword.lstrip(': ') 
+                                            if keyword in sentence.lower() or find_date_format: # if find_date_format, keyword matching is less strict
                                                 
-                                                # Take up to a certain number of words or characters
-                                                words_in_snippet = snippet_after_keyword.split()
-                                                if len(words_in_snippet) > 0 and len(words_in_snippet) <= 10: # Up to 10 words
-                                                    extracted_phrase = ' '.join(words_in_snippet)
-                                                    # Basic sanity check: avoid overly long or very short (just punctuation) phrases
-                                                    if len(extracted_phrase) > 3 and len(extracted_phrase) < 100:
-                                                        print(f"Refined info for '{keyword}' (from '{el[:30]}...'): {extracted_phrase}")
-                                                        return extracted_phrase
+                                                # Try to extract a relevant snippet
+                                                kw_idx = sentence.lower().find(keyword) if keyword else -1
+                                                
+                                                # For dates, we want the text *after* the keyword or the date phrase itself
+                                                if find_date_format:
+                                                    # If keyword is "dates", "date", "when", the actual date is usually close
+                                                    # Look for patterns like "Month Day-Day, Year" or "Day Month - Day Month Year"
+                                                    # The parse_date_range function will handle various formats
+                                                    # We need to pass it a candidate string.
+                                                    # The sentence itself, or a part of it.
+                                                    candidate_date_str = sentence
+                                                    if kw_idx != -1 : # If keyword helped find this sentence
+                                                        candidate_date_str = sentence[kw_idx + len(keyword):].lstrip(': ')
 
-                                                # Fallback to sentence if specific snippet logic fails
-                                                extracted_phrase = sentence.strip()
-                                                if len(extracted_phrase) > 70: # If sentence is long, try to snippet around keyword
-                                                    start_idx = max(0, kw_idx - 20) # shorter before keyword
-                                                    end_idx = min(len(extracted_phrase), kw_idx + len(keyword) + 50) # longer after keyword
-                                                    extracted_phrase = extracted_phrase[start_idx:end_idx].strip()
-                                                
-                                                print(f"Potential info for '{keyword}' (from '{el[:30]}...'): {extracted_phrase}")
-                                                return extracted_phrase
+                                                    # Remove common prefixes like "Dates:", "Conference Dates:"
+                                                    candidate_date_str = re.sub(r"^(conference dates|dates|date|when)\s*:\s*", "", candidate_date_str, flags=re.IGNORECASE).strip()
+
+                                                    # Attempt to parse this candidate string
+                                                    # print(f"Attempting to parse as date: '{candidate_date_str}' from sentence '{sentence}'")
+                                                    # No, parse_date_range is called later with the result of find_info
+                                                    # Here, we just return the string that seems to contain the date.
+
+                                                    # Heuristic: good date strings are not too long, and contain digits and month names
+                                                    if len(candidate_date_str) < 100 and any(char.isdigit() for char in candidate_date_str) and \
+                                                       any(month in candidate_date_str.lower() for month in ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]):
+                                                        print(f"Potential date phrase for '{keyword}': {candidate_date_str}")
+                                                        return candidate_date_str.strip()
+
+                                                else: # Not specifically finding a date string, general info extraction
+                                                    snippet_after_keyword = sentence[kw_idx + len(keyword):].lstrip(': ')
+                                                    words_in_snippet = snippet_after_keyword.split()
+                                                    extracted_phrase = ' '.join(words_in_snippet[:15]) # Take up to 15 words
+
+                                                    if len(extracted_phrase) > 3 and len(extracted_phrase) < 150 :
+                                                        print(f"Refined info for '{keyword}': {extracted_phrase}")
+                                                        return extracted_phrase.strip()
                                         
-                                        # Fallback if sentence splitting didn't work well but parent_text is plausible and contains keyword
-                                        if keyword in parent_text.lower():
-                                            kw_parent_idx = parent_text.lower().find(keyword)
-                                            start_parent_idx = max(0, kw_parent_idx - 20)
-                                            end_parent_idx = min(len(parent_text), kw_parent_idx + len(keyword) + 70) # more context
-                                            contextual_parent_text = parent_text[start_parent_idx:end_parent_idx].strip()
-                                            print(f"Potential info for '{keyword}' (context from parent for '{el[:30]}...'): {contextual_parent_text}")
-                                            return contextual_parent_text
-                        
-                        # Fallback: if deep search in parent fails, try simpler text from element and its next few siblings
-                        try:
-                            current_el_text = el.get_text(strip=True)
-                            if keyword in current_el_text.lower(): # keyword is in the element itself
-                                combined_text = current_el_text
-                                next_sib = el.next_sibling
-                                count = 0
-                                while next_sib and count < 3: # Look at next 3 siblings
-                                    if hasattr(next_sib, 'get_text'):
-                                        combined_text += " " + next_sib.get_text(strip=True)
-                                    next_sib = next_sib.next_sibling
-                                    count += 1
-                                combined_text = ' '.join(combined_text.split()) # Clean spaces
-                                if len(combined_text) > len(keyword) and len(combined_text) < 200:
-                                     print(f"Potential info for '{keyword}' (element + siblings): {combined_text}")
-                                     return combined_text
-                        except:
-                            pass
+                                        # Fallback if sentence splitting didn't work, but parent_text is plausible
+                                        if keyword in parent_text_cleaned.lower() or find_date_format:
+                                            kw_parent_idx = parent_text_cleaned.lower().find(keyword) if keyword else -1
 
-
+                                            if find_date_format:
+                                                candidate_date_str = parent_text_cleaned
+                                                if kw_parent_idx != -1:
+                                                     candidate_date_str = parent_text_cleaned[kw_parent_idx + len(keyword):].lstrip(': ')
+                                                candidate_date_str = re.sub(r"^(conference dates|dates|date|when)\s*:\s*", "", candidate_date_str, flags=re.IGNORECASE).strip()
+                                                if len(candidate_date_str) < 100 and any(char.isdigit() for char in candidate_date_str) and \
+                                                   any(month in candidate_date_str.lower() for month in ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]):
+                                                    print(f"Potential date phrase (from parent_text) for '{keyword}': {candidate_date_str}")
+                                                    return candidate_date_str.strip()
+                                            else:
+                                                contextual_parent_text = parent_text_cleaned[kw_parent_idx:] # From keyword onwards
+                                                contextual_parent_text = ' '.join(contextual_parent_text.split()[:20]) # Limit length
+                                                print(f"Potential info for '{keyword}' (context from parent): {contextual_parent_text}")
+                                                return contextual_parent_text.strip()
                 except Exception as e_find:
                     # print(f"Minor error during find_info for {keyword}: {e_find}")
-                    pass 
+                    pass
             return default_val
 
         # Attempt to find some common fields (keywords should be lowercase)
-        deadline_keywords = ["submission deadline", "paper deadline", "full paper submission", "deadline", "papers due"]
-        place_keywords = ["location", "venue", "city", "conference location", "held in"]
-        date_keywords = ["conference dates", "dates", "when", "conference takes place"] # "when" is too generic alone
+        # For dates, we'll do a more targeted search
+        deadline_keywords = ["submission deadline", "paper deadline", "full paper submission", "deadline", "papers due", "abstracts due"]
+        place_keywords = ["location", "venue", "city", "conference location", "held in", "takes place in"]
+        # date_keywords are used to find a string, which is then parsed by parse_date_range
+        date_text_keywords = ["conference dates", "dates:", "held from", "takes place from", "conference:", "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+
+        raw_date_str = find_info(date_text_keywords, soup, year, find_date_format=True)
         
-        deadline_str = find_info(deadline_keywords)
-        place_str = find_info(place_keywords)
-        date_str = find_info(date_keywords)
+        # Try to find date near conference title if previous failed
+        if raw_date_str == "TODO":
+            title_elements = soup.find_all(string=lambda t: t and conference_title.lower() in t.lower())
+            for el in title_elements:
+                parent = el.parent
+                if parent:
+                    parent_text = parent.get_text(" ", strip=True)
+                    # Look for date like patterns near the title
+                    # Example: "AAAI 2026 January 20-27, 2026"
+                    # Or table rows/list items containing title and then date
+                    # This is a simple proximity search
+                    candidate_str = parent_text[parent_text.lower().find(conference_title.lower()):] # text from title onwards
+                    # Limit length to avoid overly broad matches
+                    candidate_str = ' '.join(candidate_str.split()[:20])
+
+                    if str(year) in candidate_str and any(month.lower() in candidate_str.lower() for month in ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]):
+                        # Remove the conference title itself from the candidate string to isolate date part
+                        candidate_str = candidate_str.lower().replace(conference_title.lower(), "").strip()
+                        # Remove year if it's at the beginning (e.g. "2026 January 20-27")
+                        candidate_str = re.sub(r"^\d{4}\s*", "", candidate_str).strip()
+
+                        print(f"Found candidate date string near title: '{candidate_str}'")
+                        raw_date_str = candidate_str
+                        break
+
+
+        start_date, end_date = parse_date_range(raw_date_str, year)
+
+        # If parse_date_range couldn't find it, try a more direct search for common text like "Month Day - Day, Year"
+        if not start_date:
+            all_text = soup.get_text(" ", strip=True)
+            # Common date range patterns (simplified)
+            # January 20 – 27, 2026  |  Jan 20-27, 2026 | 20-27 January 2026
+            # This regex is very broad, parse_date_range will validate
+            potential_date_matches = re.findall(r"([A-Za-z]+\s\d{1,2}(?:st|nd|rd|th)?\s*(?:–|-)\s*\d{1,2}(?:st|nd|rd|th)?\s*,\s*\d{4})", all_text, re.IGNORECASE) # Month Day-Day, Year
+            if not potential_date_matches:
+                 potential_date_matches = re.findall(r"(\d{1,2}(?:st|nd|rd|th)?\s*(?:–|-)\s*\d{1,2}(?:st|nd|rd|th)?\s*[A-Za-z]+\s\d{4})", all_text, re.IGNORECASE) # Day-Day Month Year
+            if not potential_date_matches: # Month Day, Year - Month Day, Year
+                 potential_date_matches = re.findall(r"([A-Za-z]+\s\d{1,2}(?:st|nd|rd|th)?(?:,\s*\d{4})?\s*(?:–|-)\s*[A-Za-z]+\s\d{1,2}(?:st|nd|rd|th)?,\s*\d{4})", all_text, re.IGNORECASE)
+
+            for potential_match in potential_date_matches:
+                if str(year) in potential_match: # Ensure it's for the target year
+                    print(f"Trying regex match for date: {potential_match}")
+                    s, e = parse_date_range(potential_match, year)
+                    if s and e:
+                        raw_date_str = potential_match # Store the string that was successfully parsed
+                        start_date, end_date = s, e
+                        print(f"Date found via regex and parse_date_range: {start_date} to {end_date}")
+                        break
         
+        deadline_str = find_info(deadline_keywords, soup, year)
+        place_str = find_info(place_keywords, soup, year)
+        # The 'date' field in YAML was the string, keep it if parsed, else TODO
+        date_yaml_str = raw_date_str if start_date and raw_date_str != "TODO" else "TODO"
+
+
         # Try to find a Call for Papers (CFP) link, often very informative
         cfp_link = "TODO"
         for link_tag in soup.find_all('a', href=True):
@@ -207,29 +404,37 @@ def scrape_conference_info(url, conference_title, year):
                 break # Take the first one
 
         # Basic post-processing: if a found string is too generic like just "deadline" or "location"
-        if deadline_str.lower() in deadline_keywords and len(deadline_str) <= max(len(k) for k in deadline_keywords):
-            deadline_str = "TODO" # Reset if it's just the keyword itself
-        if place_str.lower() in place_keywords and len(place_str) <= max(len(k) for k in place_keywords):
+        if deadline_str.lower() in deadline_keywords and len(deadline_str) <= max(len(k) for k in deadline_keywords) and deadline_str != "TODO":
+            print(f"Resetting deadline from '{deadline_str}' to TODO as it's just a keyword.")
+            deadline_str = "TODO"
+        if place_str.lower() in place_keywords and len(place_str) <= max(len(k) for k in place_keywords) and place_str != "TODO":
+            print(f"Resetting place from '{place_str}' to TODO as it's just a keyword.")
             place_str = "TODO"
-        if date_str.lower() in date_keywords and len(date_str) <= max(len(k) for k in date_keywords):
-            date_str = "TODO"
+        # date_yaml_str is already handled by being "TODO" if start_date is None
 
         extracted_data = {
             "title": conference_title,
             "year": int(year),
-            "id": conference_title.lower().replace(" ", "").replace("-", "") + str(year)[-2:],
-            "link": url, # This is the page we scraped
+            "id": conference_title.lower().replace(" ", "").replace("-", "") + str(year)[-2:], # ID is titleYYYY (last 2 digits of year)
+            "link": url,
             "deadline": deadline_str,
-            "abstract_deadline": "TODO", # Still hard to find reliably without more specific patterns
-            "timezone": "TODO", # TZ is often not explicitly on page or requires parsing relative times
+            "abstract_deadline": "TODO",
+            "timezone": "TODO",
             "place": place_str,
-            "date": date_str,
-            "start": "TODO", # Requires parsing 'date_str'
-            "end": "TODO", # Requires parsing 'date_str'
-            "sub": "TODO", # Subject area, very hard to find generically
+            "date": date_yaml_str, # The original string that was parsed, or "TODO"
+            "start": start_date if start_date else "TODO",
+            "end": end_date if end_date else "TODO",
+            "sub": "TODO",
             "note": f"Scraped from {url}" + (f". CFP: {cfp_link}" if cfp_link != "TODO" else "")
         }
-        print(f"Scraped data for {conference_title} {year} from {url}: {{Deadline: {deadline_str}, Place: {place_str}, Date: {date_str}, CFP: {cfp_link}}}")
+
+        # Log the outcome of date parsing
+        if start_date and end_date:
+            print(f"Successfully parsed dates for {conference_title} {year}: {start_date} to {end_date} (from '{raw_date_str}')")
+        else:
+            print(f"Failed to parse specific start/end dates for {conference_title} {year} from '{raw_date_str}'. Date field will be '{date_yaml_str}'.")
+
+        print(f"Scraped data for {conference_title} {year} from {url}: {{Deadline: {deadline_str}, Place: {place_str}, Date string: {date_yaml_str}, Start: {extracted_data['start']}, End: {extracted_data['end']}, CFP: {cfp_link}}}")
         return extracted_data
 
     except requests.exceptions.RequestException as e:
@@ -256,34 +461,58 @@ def update_yaml_data(existing_data, new_or_updated_conference_info_list):
 
         conf_id = new_info['id']
 
+        # Date finalization check
+        has_finalized_dates = new_info.get('start') and new_info.get('start') != "TODO" and \
+                              new_info.get('end') and new_info.get('end') != "TODO"
+
         if conf_id in existing_conf_map:
-            print(f"Conference {conf_id} (from scraped/external data) found in existing data. Comparing...")
             current_conf = existing_conf_map[conf_id]
+            print(f"Conference {conf_id} found in existing data. Comparing...")
+
+            # Check if existing entry has finalized dates
+            existing_has_finalized_dates = current_conf.get('start') and current_conf.get('start') != "TODO" and \
+                                           current_conf.get('end') and current_conf.get('end') != "TODO"
+
+            if not has_finalized_dates and existing_has_finalized_dates:
+                print(f"  Scraped data for {conf_id} does not have finalized dates, but existing entry does. Preserving existing date info.")
+                # Preserve existing date fields if new scrape doesn't have them
+                new_info['date'] = current_conf.get('date', 'TODO')
+                new_info['start'] = current_conf.get('start', 'TODO')
+                new_info['end'] = current_conf.get('end', 'TODO')
+            elif not has_finalized_dates and not existing_has_finalized_dates:
+                 print(f"  Neither scraped nor existing data for {conf_id} has finalized dates. Will update other fields if possible but dates remain not finalized.")
             
-            # Update logic: Overwrite if new_info has more specific details for key fields
-            # This is a basic heuristic. More sophisticated merging could be done.
-            # Example: if current 'deadline' is 'TODO' and new one is not.
             updated = False
             for key in ["deadline", "place", "date", "start", "end", "link", "abstract_deadline", "timezone", "sub", "note"]:
                 new_val = new_info.get(key)
                 current_val = current_conf.get(key)
-                if new_val and new_val != "TODO" and new_val is not None: # Check for meaningful new value
+
+                # Only update if new_val is meaningful ("TODO" or None is not meaningful for an update unless old value was also placeholder)
+                if new_val is not None and new_val != "TODO":
                     if current_val == "TODO" or current_val is None or current_val != new_val:
-                        # Update if old value was placeholder or different
-                        # More complex: for dates, check if newer if both are specific
                         current_conf[key] = new_val
                         updated = True
                         print(f"  Updating '{key}' for {conf_id} from '{current_val}' to '{new_val}'")
-            
+                elif key in ['start', 'end', 'date'] and new_val == "TODO" and current_val and current_val != "TODO":
+                    # Don't overwrite a good date with TODO unless it's intentional (e.g. conference got postponed indefinitely)
+                    # For now, the logic above (preserving existing dates if new ones are not final) handles this.
+                    # This path means new_val is "TODO" but current_val is good. We should keep current_val.
+                    # The preservation logic for dates already handled this specific case for start/end/date.
+                    pass
+
+
             if updated:
                 print(f"Conference {conf_id} was updated with new information.")
             else:
                 print(f"No meaningful updates for {conf_id} based on new data. Keeping existing.")
-        else:
-            # This is a new conference entry (e.g., for a future year not previously listed)
-            print(f"Adding new conference to list: {conf_id} - {new_info.get('title')} {new_info.get('year')}")
-            existing_data.append(new_info) # Append to the original list being modified
-            existing_conf_map[conf_id] = new_info # Also add to map to prevent re-adding if duplicated in input list
+
+        else: # New conference entry
+            if has_finalized_dates:
+                print(f"Adding new conference to list: {conf_id} - {new_info.get('title')} {new_info.get('year')} (Dates: {new_info.get('start')} to {new_info.get('end')})")
+                existing_data.append(new_info)
+                existing_conf_map[conf_id] = new_info
+            else:
+                print(f"Skipping adding new conference {conf_id} - {new_info.get('title')} {new_info.get('year')} as it does not have finalized dates. (Start: {new_info.get('start')}, End: {new_info.get('end')})")
 
     # Sort by year, then by title for consistent output
     # existing_data.sort(key=lambda x: (x.get('year', 0), x.get('title', '')))
@@ -362,7 +591,8 @@ def main():
             processed_ids_for_current_run.add(target_id)
             continue
 
-
+        print(f"Waiting for {SEARCH_DELAY_SECONDS}s before next search to avoid rate limiting...")
+        time.sleep(SEARCH_DELAY_SECONDS)
         urls = search_conference_websites(conference_title, year)
         found_info_for_target = False
         for url in urls:
