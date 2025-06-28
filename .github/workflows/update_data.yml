@@ -35,8 +35,44 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # Commit and push to the current branch (e.g., main)
           git add _data/conferences.yml
-          git commit -m "Automated update of conference deadlines"
+          git commit -m "Automated update of conference deadlines on ${{ github.ref_name }}"
           git push origin HEAD:${{ github.ref_name }}
+
+          # Now, commit and push the same _data/conferences.yml to gh-pages
+          # Checkout gh-pages branch, or create it if it doesn't exist
+          git fetch origin gh-pages || git checkout -b gh-pages
+          git checkout gh-pages
+
+          # Ensure we are starting from the latest gh-pages from remote
+          # This might not be strictly necessary if we always overwrite, but good practice
+          git pull origin gh-pages
+
+          # Copy the _data/conferences.yml from the workflow's workspace (which has the version from default branch)
+          # Need to checkout default branch temporarily to get the file, or pass it as artifact.
+          # Simpler: assume the file is in the workspace after the script ran.
+          # The script ran on the default branch checkout.
+          # We need to get this file onto the gh-pages branch.
+
+          # Create _data directory if it doesn't exist on gh-pages
+          mkdir -p _data
+
+          # This assumes the workflow is run on the default branch (e.g., main)
+          # And the updated conferences.yml is from that run.
+          # We need to get the file from the state *after* `python update_conferences.py` ran on main.
+          # The current checkout is now gh-pages.
+          # Easiest is to checkout the file from the main branch into the gh-pages branch workspace
+          git checkout ${{ github.sha }} -- _data/conferences.yml
+
+          git add _data/conferences.yml
+          # Check if there are changes to commit for conferences.yml on gh-pages
+          if ! git diff-index --quiet --cached HEAD -- _data/conferences.yml; then
+            git commit -m "Automated update of conference deadlines for gh-pages"
+            git push origin gh-pages
+          else
+            echo "_data/conferences.yml on gh-pages is already up-to-date."
+          fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Implicitly available, but good to be aware for permissions
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
