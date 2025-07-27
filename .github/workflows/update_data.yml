@@ -2,7 +2,7 @@ name: Update Conference Deadlines
 
 on:
   schedule:
-    - cron: '0 0 1 * *' # At 00:00 on the 1st day of every month
+    - cron: '0 0 * * *' # Daily at midnight UTC
   workflow_dispatch: # Allows manual triggering
 
 jobs:
@@ -11,68 +11,21 @@ jobs:
     permissions:
       contents: write # Required to push changes back to the repo
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4 # Using v4, common practice
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4 # Using v4
-        with:
-          python-version: '3.10' # Consistent with script testing environment
-
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
-      
-      - name: Run Python Script to Update Conference Data
-        run: python update_conferences.py
-
-      - name: Check for Changes
-        id: check_changes
+      - name: Download conferences.yml from upstream
         run: |
-          git diff --quiet _data/conferences.yml || echo "changed=true" >> $GITHUB_ENV
+          curl -L https://raw.githubusercontent.com/paperswithcode/ai-deadlines/gh-pages/_data/conferences.yml -o _data/conferences.yml
 
-      - name: Commit and Push Changes
-        if: env.changed == 'true'
+      - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-          # Commit and push to the current branch (e.g., main)
           git add _data/conferences.yml
-          git commit -m "Automated update of conference deadlines on ${{ github.ref_name }}"
-          git push origin HEAD:${{ github.ref_name }}
-
-          # Now, commit and push the same _data/conferences.yml to gh-pages
-          # Checkout gh-pages branch, or create it if it doesn't exist
-          git fetch origin gh-pages || git checkout -b gh-pages
-          git checkout gh-pages
-
-          # Ensure we are starting from the latest gh-pages from remote
-          # This might not be strictly necessary if we always overwrite, but good practice
-          git pull origin gh-pages
-
-          # Copy the _data/conferences.yml from the workflow's workspace (which has the version from default branch)
-          # Need to checkout default branch temporarily to get the file, or pass it as artifact.
-          # Simpler: assume the file is in the workspace after the script ran.
-          # The script ran on the default branch checkout.
-          # We need to get this file onto the gh-pages branch.
-
-          # Create _data directory if it doesn't exist on gh-pages
-          mkdir -p _data
-
-          # This assumes the workflow is run on the default branch (e.g., main)
-          # And the updated conferences.yml is from that run.
-          # We need to get the file from the state *after* `python update_conferences.py` ran on main.
-          # The current checkout is now gh-pages.
-          # Easiest is to checkout the file from the main branch into the gh-pages branch workspace
-          git checkout ${{ github.sha }} -- _data/conferences.yml
-
-          git add _data/conferences.yml
-          # Check if there are changes to commit for conferences.yml on gh-pages
-          if ! git diff-index --quiet --cached HEAD -- _data/conferences.yml; then
-            git commit -m "Automated update of conference deadlines for gh-pages"
-            git push origin gh-pages
+          if git diff --cached --quiet; then
+            echo "No updates; exiting."
           else
-            echo "_data/conferences.yml on gh-pages is already up-to-date."
+            git commit -m "Automated update of conference deadlines from upstream"
+            git push origin gh-pages
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
