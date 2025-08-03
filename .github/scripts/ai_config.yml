@@ -1,0 +1,149 @@
+# AI Conference Discovery Configuration
+
+## Target categories and their associated keywords for discovery
+target_categories:
+  machine-learning:
+    - "machine learning"
+    - "ML"
+    - "artificial intelligence"
+    - "AI"
+    - "deep learning"
+    - "neural networks"
+
+  lifelong-learning:
+    - "lifelong learning"
+    - "continual learning"
+    - "incremental learning"
+    - "online learning"
+
+  robotics:
+    - "robotics"
+    - "autonomous systems"
+    - "robot"
+    - "automation"
+    - "mechatronics"
+
+  computer-vision:
+    - "computer vision"
+    - "CV"
+    - "image processing"
+    - "visual recognition"
+    - "pattern recognition"
+
+  web-search:
+    - "web search"
+    - "information retrieval"
+    - "search engines"
+    - "IR"
+
+  data-mining:
+    - "data mining"
+    - "knowledge discovery"
+    - "big data analytics"
+    - "data science"
+
+  natural-language-processing:
+    - "natural language processing"
+    - "NLP"
+    - "computational linguistics"
+    - "text mining"
+    - "language models"
+
+  signal-processing:
+    - "signal processing"
+    - "DSP"
+    - "audio processing"
+    - "speech"
+    - "multimedia"
+
+  human-computer-interaction:
+    - "HCI"
+    - "human computer interaction"
+    - "user interface"
+    - "UX"
+    - "usability"
+
+  computer-graphics:
+    - "computer graphics"
+    - "visualization"
+    - "rendering"
+    - "3D"
+    - "virtual reality"
+
+  mathematics:
+    - "mathematics"
+    - "mathematical optimization"
+    - "numerical methods"
+    - "statistics"
+
+  reinforcement-learning:
+    - "reinforcement learning"
+    - "RL"
+    - "deep RL"
+    - "multi-agent"
+    - "Q-learning"
+
+## Discovery sources configuration
+sources:
+  wikicfp:
+    enabled: true
+    base_url: "http://www.wikicfp.com/cfp/"
+    max_results_per_keyword: 10
+    request_delay: 1  # seconds between requests
+
+  deadline_trackers:
+    enabled: true
+    urls:
+      - "https://aideadlin.es/"
+      - "https://jackietseng.github.io/conference_call_for_paper/conferences.html"
+    max_results_per_site: 20
+
+  university_pages:
+    enabled: false  # Can be resource intensive
+    urls:
+      - "https://www.cs.stanford.edu/news/"
+      - "https://www.csail.mit.edu/news"
+      - "https://ai.berkeley.edu/news/"
+      - "https://www.cs.cmu.edu/news"
+
+## AI enhancement configuration
+ai_enhancement:
+  enabled: true
+  model: "gemini-2.5-flash"  # Use Gemini instead of GPT
+  confidence_threshold: 0.6  # Minimum confidence to include conference
+  max_tokens: 300
+  temperature: 0.1
+  rate_limit_delay: 0.5  # seconds between API calls
+
+## Filtering criteria
+filtering:
+  min_title_length: 3
+  max_description_length: 500
+  years_ahead: 2  # How many years in the future to consider
+  exclude_patterns:
+    - "workshop"
+    - "symposium on XYZ"  # Add patterns to exclude
+
+  required_fields:
+    - "title"
+    - "tags"
+
+## Output configuration
+output:
+  auto_add_to_yml: true
+  backup_before_changes: true
+  sort_by_deadline: true
+  add_discovery_note: true
+
+## Rate limiting and safety
+rate_limiting:
+  max_requests_per_minute: 30
+  request_timeout: 10  # seconds
+  max_retries: 3
+  backoff_factor: 2
+
+## Logging
+logging:
+  level: "INFO"
+  include_timestamps: true
+  log_api_calls: false  # Set to true for debugging
