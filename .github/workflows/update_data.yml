@@ -1,31 +1,63 @@
-name: Update Conference Deadlines
+name: Update conference data
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Daily at midnight UTC
-  workflow_dispatch: # Allows manual triggering
+    # Run every Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  update_deadlines:
+  update:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # Required to push changes back to the repo
     steps:
-      - name: Checkout code
+      - name: Checkout the repository
         uses: actions/checkout@v4
+        with:
+          ref: gh-pages
 
-      - name: Download conferences.yml from upstream
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
         run: |
-          curl -L https://raw.githubusercontent.com/paperswithcode/ai-deadlines/gh-pages/_data/conferences.yml -o _data/conferences.yml
+          pip install -r .github/scripts/requirements.txt
+
+      - name: Prepare conferences file
+        run: |
+          # Copy the existing conferences file to src/data if present so
+          # that scripts expecting that location will work.
+          mkdir -p src/data
+          if [ -f _data/conferences.yml ]; then
+            cp _data/conferences.yml src/data/conferences.yml
+          fi
+
+      - name: Fetch and update official conference data
+        run: |
+          python .github/scripts/update_conferences.py
+
+      - name: Run AI conference discovery
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python .github/scripts/ai_conference_discovery.py
+
+      - name: Copy back updated data file
+        run: |
+          # If src/data was updated, move it back into _data so that
+          # Jekyll picks it up.  Only copy if the file exists.
+          if [ -f src/data/conferences.yml ]; then
+            mv src/data/conferences.yml _data/conferences.yml
+          fi
 
       - name: Commit and push changes
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add _data/conferences.yml
-          if git diff --cached --quiet; then
-            echo "No updates; exiting."
-          else
-            git commit -m "Automated update of conference deadlines from upstream"
-            git push origin gh-pages
-          fi
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Update conference data via crawler and Gemini discovery'
+          branch: gh-pages
+          file_pattern: '_data/conferences.yml'
