@@ -1,0 +1,17 @@
+# Core dependencies for conference automation
+pyyaml>=6.0
+requests>=2.25.0
+
+# Web scraping dependencies
+beautifulsoup4>=4.9.0
+lxml>=4.6.0
+
+# AI/LLM dependencies
+google-generativeai>=0.3.0  # Provides access to Gemini models
+
+# Data processing
+python-dateutil>=2.8.0
+
+# Optional: For more advanced NLP tasks (disabled by default)
+# nltk>=3.6.0
+# spacy>=3.4.0
