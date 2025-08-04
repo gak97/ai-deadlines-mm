@@ -38,7 +38,7 @@ jobs:
           # This prepares for a clean copy of the _site contents.
           # IMPORTANT: List any files or directories at the root level that are NOT part of the
           # Jekyll _site output but MUST be preserved on the gh-pages branch.
-          # For example, if you have CNAME, README.md, update_conferences.py, requirements.txt,
+          # For example, if you have CNAME, README.md, consolidated_conference_updater.py, requirements.txt,
           # Gemfile, Gemfile.lock, _data/ etc. at the root, they should be preserved.
           # The current script assumes that everything not in _site should be replaced.
           # A better approach is to specify what to keep.
@@ -52,7 +52,7 @@ jobs:
           # Add any other files/dirs you need to preserve in the -not -path arguments
           git ls-files | grep -vE '^(\.git|\.github)' | xargs -r rm -f
           find . -maxdepth 1 -type d -not -name '.' -not -name '.git' -not -name '.github' -not -name '_data' -exec rm -rf {} +
-          find . -maxdepth 1 -type f -not -name 'README.md' -not -name 'CNAME' -not -name 'Gemfile' -not -name 'Gemfile.lock' -not -name 'update_conferences.py' -not -name 'requirements.txt' -exec rm -f {} +
+          find . -maxdepth 1 -type f -not -name 'README.md' -not -name 'CNAME' -not -name 'Gemfile' -not -name 'Gemfile.lock' -not -name 'consolidated_conference_updater.py' -not -name 'requirements.txt' -exec rm -f {} +
 
 
           # Copy the new site from the temporary directory
