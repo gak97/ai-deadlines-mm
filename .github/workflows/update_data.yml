@@ -37,15 +37,11 @@ jobs:
             cp _data/conferences.yml src/data/conferences.yml
           fi
 
-      - name: Fetch and update official conference data
-        run: |
-          python .github/scripts/update_conferences.py
-
-      - name: Run AI conference discovery
+      - name: Run consolidated conference updater
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          python .github/scripts/ai_conference_discovery.py
+          python consolidated_conference_updater.py
 
       - name: Copy back updated data file
         run: |
@@ -58,6 +54,6 @@ jobs:
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'Update conference data via crawler and Gemini discovery'
+          commit_message: 'Update conference data via consolidated updater (CCF + AI + scraping)'
           branch: gh-pages
           file_pattern: '_data/conferences.yml'

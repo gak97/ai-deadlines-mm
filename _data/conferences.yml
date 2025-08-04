@@ -1,3 +1,875 @@
----
-# This file stores conference metadata used by the Jekyll site.
-# It will be automatically populated by the update scripts.
+- id: icra25
+  title: ICRA
+  full_name: IEEE International Conference on Robotics and Automation
+  year: 2025
+  date: May 19-23, 2025
+  deadline: '2024-07-15 12:00:00'
+  abstract_deadline: ''
+  location: Atlanta (GA), USA
+  city: Atlanta (GA)
+  country: USA
+  url: https://2025.ieee-icra.org
+  description: IEEE International Conference on Robotics and Automation
+  timezone: UTC-4
+  tags: []
+  source: ccf
+  start: '2025-05-19'
+  end: '2025-05-23'
+- id: wacv25
+  title: WACV
+  full_name: IEEE/CVF Winter Conference on Applications of Computer Vision
+  year: 2025
+  date: February 28 - March 4, 2025
+  deadline: '2024-07-15 23:59:59'
+  abstract_deadline: ''
+  location: Tucson, Arizona, USA
+  city: Tucson
+  country: Arizona, USA
+  url: https://wacv2025.thecvf.com/
+  description: IEEE/CVF Winter Conference on Applications of Computer Vision
+  timezone: UTC-7
+  tags: []
+  source: ccf
+  start: '2025-02-28'
+  end: '2025-03-04'
+- id: aaai25
+  title: AAAI
+  full_name: AAAI Conference on Artificial Intelligence
+  year: 2025
+  date: February 25 - March 4, 2025
+  deadline: '2024-08-15 23:59:59'
+  abstract_deadline: '2024-08-07 23:59:59'
+  location: PHILADELPHIA, PENNSYLVANIA, USA
+  city: PHILADELPHIA
+  country: PENNSYLVANIA, USA
+  url: https://aaai.org/conference/aaai/aaai-25/
+  description: AAAI Conference on Artificial Intelligence
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-02-25'
+  end: '2025-03-04'
+- id: coling25
+  title: COLING
+  full_name: INTERNATIONNAL CONFERENCE ON COMPUTATIONAL LINGUISTICS
+  year: 2025
+  date: Jan 19 - Jan 24, 2025
+  deadline: '2024-09-16 23:59:59'
+  abstract_deadline: ''
+  location: Abu Dhabi, UAE
+  city: Abu Dhabi
+  country: UAE
+  url: https://coling2025.org/
+  description: INTERNATIONNAL CONFERENCE ON COMPUTATIONAL LINGUISTICS
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-01-19'
+  end: '2025-01-24'
+- id: fgr25
+  title: FG
+  full_name: International Conference on Automatic Face and Gesture Recognition
+  year: 2025
+  date: May 26-30, 2025
+  deadline: '2024-09-30 23:59:59'
+  abstract_deadline: ''
+  location: Clearwater, USA
+  city: Clearwater
+  country: USA
+  url: https://fg2025.ieee-biometrics.org/
+  description: International Conference on Automatic Face and Gesture Recognition
+  timezone: UTC-8
+  tags: []
+  source: ccf
+  start: '2025-05-26'
+  end: '2025-05-30'
+- id: alt2025
+  title: ALT
+  full_name: International Conference on Algorithmic Learning Theory
+  year: 2025
+  date: February 24-27, 2025
+  deadline: '2024-10-01 09:59:59'
+  abstract_deadline: ''
+  location: Milan, Italy
+  city: Milan
+  country: Italy
+  url: https://algorithmiclearningtheory.org/alt2025/
+  description: International Conference on Algorithmic Learning Theory
+  timezone: UTC+0
+  tags: []
+  source: ccf
+  start: '2025-02-24'
+  end: '2025-02-27'
+- id: iclr25
+  title: ICLR
+  full_name: International Conference on Learning Representations
+  year: 2025
+  date: April 24-28, 2025
+  deadline: '2024-10-01 23:59:59'
+  abstract_deadline: '2024-09-27 23:59:59'
+  location: Singapore
+  city: ''
+  country: Singapore
+  url: https://iclr.cc/Conferences/2025
+  description: International Conference on Learning Representations
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-04-24'
+  end: '2025-04-28'
+- id: aistats25
+  title: AISTATS
+  full_name: International Conference on Artificial Intelligence and Statistics
+  year: 2025
+  date: May 3-5, 2025
+  deadline: '2024-10-10 23:59:59'
+  abstract_deadline: '2024-10-03 23:59:59'
+  location: Mai Khao, Thailand
+  city: Mai Khao
+  country: Thailand
+  url: https://aistats.org/aistats2025
+  description: International Conference on Artificial Intelligence and Statistics
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-05-03'
+  end: '2025-05-05'
+- id: naacl25
+  title: NAACL
+  full_name: The Annual Conference of the North American Chapter of the Association
+    for Computational Linguistics
+  year: 2025
+  date: April 29-May 4, 2025
+  deadline: '2024-10-15 23:59:59'
+  abstract_deadline: ''
+  location: Albuquerque, New Mexico, USA
+  city: Albuquerque
+  country: New Mexico, USA
+  url: https://2025.naacl.org/
+  description: The Annual Conference of the North American Chapter of the Association
+    for Computational Linguistics
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: ''
+  end: ''
+- id: aamas25
+  title: AAMAS
+  full_name: International Conference on Autonomous Agents and Multiagent Systems
+  year: 2025
+  date: May 19-23, 2025
+  deadline: '2024-10-16 23:59:59'
+  abstract_deadline: '2024-10-09 23:59:59'
+  location: Detroit, Michigan, USA
+  city: Detroit
+  country: Michigan, USA
+  url: https://aamas2025.org/
+  description: International Conference on Autonomous Agents and Multiagent Systems
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-05-19'
+  end: '2025-05-23'
+- id: icaps25
+  title: ICAPS
+  full_name: International Conference on Automated Planning and Scheduling
+  year: 2025
+  date: November 9-14, 2025
+  deadline: '2024-11-01 23:59:59'
+  abstract_deadline: '2024-10-25 23:59:59'
+  location: Melbourne, Victoria, Australia
+  city: Melbourne
+  country: Victoria, Australia
+  url: https://icaps25.icaps-conference.org/
+  description: International Conference on Automated Planning and Scheduling
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-11-09'
+  end: '2025-11-14'
+- id: cvpr25
+  title: CVPR
+  full_name: IEEE/CVF Conference on Computer Vision and Pattern Recognition
+  year: 2025
+  date: June 10-17, 2025
+  deadline: '2024-11-14 23:59:00'
+  abstract_deadline: '2024-11-07 23:59:00'
+  location: Nashville, Tennessee, USA
+  city: Nashville
+  country: Tennessee, USA
+  url: https://cvpr.thecvf.com/Conferences/2025/CallForPapers
+  description: IEEE/CVF Conference on Computer Vision and Pattern Recognition
+  timezone: UTC-8
+  tags: []
+  source: ccf
+  start: '2025-06-10'
+  end: '2025-06-17'
+- id: esann25
+  title: ESANN
+  full_name: European Symposium on Artificial Neural Networks, Computational Intelligence
+    and Machine Learning
+  year: 2025
+  date: April 23 - April 25, 2025
+  deadline: '2024-11-20 00:00:00'
+  abstract_deadline: '2024-11-20 00:00:00'
+  location: Bruges, Belgium
+  city: Bruges
+  country: Belgium
+  url: https://www.esann.org/
+  description: European Symposium on Artificial Neural Networks, Computational Intelligence
+    and Machine Learning
+  timezone: UTC-8
+  tags: []
+  source: ccf
+  start: '2025-04-23'
+  end: '2025-04-25'
+- id: cpal25
+  title: CPAL
+  full_name: The Conference on Parsimony and Learning
+  year: 2025
+  date: March 24-27, 2025
+  deadline: '2024-11-25 23:59:59'
+  abstract_deadline: ''
+  location: California, USA
+  city: California
+  country: USA
+  url: https://cpal.cc/
+  description: The Conference on Parsimony and Learning
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-03-24'
+  end: '2025-03-27'
+- id: cec2025
+  title: CEC
+  full_name: IEEE Congress on Evolutionary Computation
+  year: 2025
+  date: June 8-12, 2025
+  deadline: '2025-01-15 23:59:59'
+  abstract_deadline: ''
+  location: Hangzhou, China
+  city: Hangzhou
+  country: China
+  url: https://www.cec2025.org/
+  description: IEEE Congress on Evolutionary Computation
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-06-08'
+  end: '2025-06-12'
+- id: ijcai25
+  title: IJCAI
+  full_name: International Joint Conference on Artificial Intelligence
+  year: 2025
+  date: August 16-22, 2025
+  deadline: '2025-01-23 23:59:59'
+  abstract_deadline: '2025-01-16 23:59:59'
+  location: Montreal, Canada.
+  city: Montreal
+  country: Canada.
+  url: https://2025.ijcai.org/
+  description: International Joint Conference on Artificial Intelligence
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-08-16'
+  end: '2025-08-22'
+- id: rss25
+  title: RSS
+  full_name: Robotics Science and Systems
+  year: 2025
+  date: June 21-25, 2025
+  deadline: '2025-01-24 23:59:00'
+  abstract_deadline: '2025-01-17 23:59:00'
+  location: Los Angeles, California, USA
+  city: Los Angeles
+  country: California, USA
+  url: https://roboticsconference.org
+  description: Robotics Science and Systems
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-06-21'
+  end: '2025-06-25'
+- id: gecco25
+  title: GECCO
+  full_name: Genetic and Evolutionary Computation Conference
+  year: 2025
+  date: July 14-18, 2025
+  deadline: '2025-01-29 23:59:00'
+  abstract_deadline: '2025-01-22 23:59:00'
+  location: "M\xE1laga, Spain (hybrid)"
+  city: "M\xE1laga"
+  country: Spain (hybrid)
+  url: https://gecco-2025.sigevo.org/HomePage
+  description: Genetic and Evolutionary Computation Conference
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-07-14'
+  end: '2025-07-18'
+- id: icml25
+  title: ICML
+  full_name: International Conference on Machine Learning
+  year: 2025
+  date: July 11-19, 2025
+  deadline: '2025-01-30 23:59:59'
+  abstract_deadline: '2025-01-23 23:59:59'
+  location: Vancouver Convention Center, Vancouver, Canada
+  city: Vancouver Convention Center
+  country: Vancouver, Canada
+  url: https://icml.cc/Conferences/2025
+  description: International Conference on Machine Learning
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-07-11'
+  end: '2025-07-19'
+- id: ijcnn2025
+  title: IJCNN
+  full_name: International Joint Conference on Neural Networks
+  year: 2025
+  date: June 30 - July 5, 2025
+  deadline: '2025-02-05 23:59:59'
+  abstract_deadline: ''
+  location: Rome, Italy
+  city: Rome
+  country: Italy
+  url: https://2025.ijcnn.org/
+  description: International Joint Conference on Neural Networks
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-06-30'
+  end: '2025-07-05'
+- id: colt25
+  title: COLT
+  full_name: Annual Conference on Learning Theory
+  year: 2025
+  date: June 30 - July 4, 2025
+  deadline: '2025-02-06 16:59:59'
+  abstract_deadline: ''
+  location: Lyon, France
+  city: Lyon
+  country: France
+  url: https://learningtheory.org/colt2025/
+  description: Annual Conference on Learning Theory
+  timezone: UTC-5
+  tags: []
+  source: ccf
+  start: '2025-06-30'
+  end: '2025-07-04'
+- id: uai25
+  title: UAI
+  full_name: Conference on Uncertainty in Artificial Intelligence
+  year: 2025
+  date: July 21-25, 2025
+  deadline: '2025-02-10 23:59:59'
+  abstract_deadline: ''
+  location: Rio de Janeiro, Brazil
+  city: Rio de Janeiro
+  country: Brazil
+  url: https://www.auai.org/uai2025/
+  description: Conference on Uncertainty in Artificial Intelligence
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-07-21'
+  end: '2025-07-25'
+- id: acl25
+  title: ACL
+  full_name: Annual Meeting of the Association for Computational Linguistics
+  year: 2025
+  date: July 27 - August 1, 2025
+  deadline: '2025-02-15 23:59:59'
+  abstract_deadline: ''
+  location: Vienna, Austria
+  city: Vienna
+  country: Austria
+  url: https://2025.aclweb.org/
+  description: Annual Meeting of the Association for Computational Linguistics
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-07-27'
+  end: '2025-08-01'
+- id: iros25
+  title: IROS
+  full_name: IEEE\RSJ International Conference on Intelligent Robots and Systems
+  year: 2025
+  date: October 19-25, 2025
+  deadline: '2025-03-01 23:59:59'
+  abstract_deadline: ''
+  location: Hangzhou, China
+  city: Hangzhou
+  country: China
+  url: http://www.iros25.org/
+  description: IEEE\RSJ International Conference on Intelligent Robots and Systems
+  timezone: UTC-8
+  tags: []
+  source: ccf
+  start: '2025-10-19'
+  end: '2025-10-25'
+- id: icdar2025
+  title: ICDAR
+  full_name: International Conference on Document Analysis and Recognition
+  year: 2025
+  date: September 17-21, 2025
+  deadline: '2025-03-07 23:59:59'
+  abstract_deadline: '2025-02-28 23:59:59'
+  location: Wuhan, China
+  city: Wuhan
+  country: China
+  url: https://www.icdar2025.com/home
+  description: International Conference on Document Analysis and Recognition
+  timezone: UTC+0
+  tags: []
+  source: ccf
+  start: '2025-09-17'
+  end: '2025-09-21'
+- id: iccv25
+  title: ICCV
+  full_name: IEEE International Conference on Computer Vision
+  year: 2025
+  date: October 19-25, 2025
+  deadline: '2025-03-08 09:59:59'
+  abstract_deadline: '2025-03-04 09:59:59'
+  location: Honolulu, Hawaii
+  city: Honolulu
+  country: Hawaii
+  url: https://iccv.thecvf.com/Conferences/2025
+  description: IEEE International Conference on Computer Vision
+  timezone: UTC+0
+  tags: []
+  source: ccf
+  start: '2025-10-19'
+  end: '2025-10-25'
+- id: conll25
+  title: CoNLL
+  full_name: Conference on Computational Natural Language Learning
+  year: 2025
+  date: July 31 - August 1, 2025
+  deadline: '2025-03-14 23:59:59'
+  abstract_deadline: ''
+  location: Vienna, Austria
+  city: Vienna
+  country: Austria
+  url: https://www.conll.org/
+  description: Conference on Computational Natural Language Learning
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-07-31'
+  end: '2025-08-01'
+- id: ksem25
+  title: KSEM
+  full_name: International Conference on Knowledge Science, Engineering and Management
+  year: 2025
+  date: August 4-6, 2025
+  deadline: '2025-03-20 23:59:59'
+  abstract_deadline: ''
+  location: Macao SAR, China
+  city: Macao SAR
+  country: China
+  url: https://ksem2025.scimeeting.cn/
+  description: International Conference on Knowledge Science, Engineering and Management
+  timezone: UTC+0
+  tags: []
+  source: ccf
+  start: '2025-08-04'
+  end: '2025-08-06'
+- id: colm25
+  title: COLM
+  full_name: Conference on Language Modeling
+  year: 2025
+  date: October 7-9, 2025
+  deadline: '2025-03-28 23:59:59'
+  abstract_deadline: '2025-03-22 23:59:59'
+  location: "Palais des Congr\xE8s Montreal, Canada"
+  city: "Palais des Congr\xE8s Montreal"
+  country: Canada
+  url: https://colmweb.org/cfp.html
+  description: Conference on Language Modeling
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-10-07'
+  end: '2025-10-09'
+- id: icann2025
+  title: ICANN
+  full_name: International Conference on Artificial Neural Networks
+  year: 2025
+  date: Sept 9-12, 2025
+  deadline: '2025-03-29 23:59:59'
+  abstract_deadline: ''
+  location: Kaunas, Lithuania
+  city: Kaunas
+  country: Lithuania
+  url: https://e-nns.org/icann2025/
+  description: International Conference on Artificial Neural Networks
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-09-09'
+  end: '2025-09-12'
+- id: ijcb2025
+  title: IJCB
+  full_name: International Joint Conference on Biometrics
+  year: 2025
+  date: September 8-11, 2025
+  deadline: '2025-04-11 23:59:59'
+  abstract_deadline: ''
+  location: Osaka, Japan
+  city: Osaka
+  country: Japan
+  url: https://ijcb2025.ieee-biometrics.org/
+  description: International Joint Conference on Biometrics
+  timezone: UTC-7
+  tags: []
+  source: ccf
+  start: '2025-09-08'
+  end: '2025-09-11'
+- id: nlpcc2025
+  title: NLPCC
+  full_name: CCF International Conference on Natural Language Processing and Chinese
+    Computing
+  year: 2025
+  date: August 8-10, 2025
+  deadline: '2025-04-20 23:59:59'
+  abstract_deadline: ''
+  location: Urumqi, China
+  city: Urumqi
+  country: China
+  url: http://tcci.ccf.org.cn/conference/2025/index.php
+  description: CCF International Conference on Natural Language Processing and Chinese
+    Computing
+  timezone: UTC+8
+  tags: []
+  source: ccf
+  start: '2025-08-08'
+  end: '2025-08-10'
+- id: corl25
+  title: CoRL
+  full_name: The Conference on Robot Learning
+  year: 2025
+  date: September 27-30, 2025
+  deadline: '2025-04-30 23:59:59'
+  abstract_deadline: ''
+  location: Seoul, Korea
+  city: Seoul
+  country: Korea
+  url: https://www.corl.org/
+  description: The Conference on Robot Learning
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-09-27'
+  end: '2025-09-30'
+- id: ecai25
+  title: ECAI
+  full_name: European Conference on Artificial Intelligence
+  year: 2025
+  date: October 25-30, 2025
+  deadline: '2025-05-06 23:59:59'
+  abstract_deadline: '2025-04-29 23:59:59'
+  location: Bologna, ITALY
+  city: Bologna
+  country: ITALY
+  url: https://ecai2025.org/deadlines/
+  description: European Conference on Artificial Intelligence
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-10-25'
+  end: '2025-10-30'
+- id: krd25
+  title: KR
+  full_name: International Conference on Principles of Knowledge Representation and
+    Reasoning
+  year: 2025
+  date: November 11-17, 2025
+  deadline: '2025-05-12 23:59:59'
+  abstract_deadline: '2025-05-07 23:59:59'
+  location: Melbourne, Australia
+  city: Melbourne
+  country: Australia
+  url: https://kr.org/KR2025/
+  description: International Conference on Principles of Knowledge Representation
+    and Reasoning
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-11-11'
+  end: '2025-11-17'
+- id: nips25
+  title: NeurIPS
+  full_name: Conference on Neural Information Processing Systems
+  year: 2025
+  date: December 2-7, 2025
+  deadline: '2025-05-15 23:59:59'
+  abstract_deadline: '2025-05-11 23:59:59'
+  location: San Diego Convention Center, USA
+  city: San Diego Convention Center
+  country: USA
+  url: https://neurips.cc/Conferences/2025
+  description: Conference on Neural Information Processing Systems
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-12-02'
+  end: '2025-12-07'
+- id: bmvc25
+  title: BMVC
+  full_name: British Machine Vision Conference
+  year: 2025
+  date: November 24-27, 2025
+  deadline: '2025-05-16 23:59:59'
+  abstract_deadline: '2025-05-13 23:59:59'
+  location: Sheffield, UK
+  city: Sheffield
+  country: UK
+  url: https://bmvc2025.bmva.org/
+  description: British Machine Vision Conference
+  timezone: UTC+0
+  tags: []
+  source: ccf
+  start: '2025-11-24'
+  end: '2025-11-27'
+- id: emnlp25
+  title: EMNLP
+  full_name: The annual Conference on Empirical Methods in Natural Language Processing
+  year: 2025
+  date: November 5 - 9, 2025
+  deadline: '2025-05-19 23:59:59'
+  abstract_deadline: ''
+  location: Suzhou, China
+  city: Suzhou
+  country: China
+  url: https://2025.emnlp.org/
+  description: The annual Conference on Empirical Methods in Natural Language Processing
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-11-05'
+  end: '2025-11-09'
+- id: iconip2025
+  title: ICONIP
+  full_name: International Conference on Neural Information Processing
+  year: 2025
+  date: November 20-24, 2025
+  deadline: '2025-05-22 23:59:59'
+  abstract_deadline: ''
+  location: Okinawa, Japan
+  city: Okinawa
+  country: Japan
+  url: https://iconip2025.apnns.org/
+  description: International Conference on Neural Information Processing
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-11-20'
+  end: '2025-11-24'
+- id: acml25
+  title: ACML
+  full_name: Asian Conference on Machine Learning
+  year: 2025
+  date: December 9-12, 2025
+  deadline: '2025-05-30 23:59:59'
+  abstract_deadline: ''
+  location: Taipei, Taiwan
+  city: Taipei
+  country: Taiwan
+  url: https://www.acml-conf.org/2025/
+  description: Asian Conference on Machine Learning
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2025-12-09'
+  end: '2025-12-12'
+- id: pricai2025
+  title: PRICAI
+  full_name: Pacific Rim International Conference on Artificial Intelligence
+  year: 2025
+  date: Nov 17-21, 2025
+  deadline: '2025-06-27 23:59:59'
+  abstract_deadline: ''
+  location: Wellington, New Zealand
+  city: Wellington
+  country: New Zealand
+  url: https://www.pricai.org/2025/
+  description: Pacific Rim International Conference on Artificial Intelligence
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-11-17'
+  end: '2025-11-21'
+- id: wacv26
+  title: WACV
+  full_name: IEEE/CVF Winter Conference on Applications of Computer Vision
+  year: 2026
+  date: Mar 6 - 10, 2026
+  deadline: '2025-07-18 23:59:59'
+  abstract_deadline: '2025-07-11 23:59:00'
+  location: Tucson, Arizona, USA
+  city: Tucson
+  country: Arizona, USA
+  url: https://wacv.thecvf.com/
+  description: IEEE/CVF Winter Conference on Applications of Computer Vision
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2026-03-06'
+  end: '2026-03-10'
+- id: ijcnlp2025
+  title: IJCNLP
+  full_name: International Joint Conference on Natural Language Processing
+  year: 2025
+  date: Dec 20-24, 2025
+  deadline: '2025-07-28 23:59:59'
+  abstract_deadline: ''
+  location: Mumbai, India
+  city: Mumbai
+  country: India
+  url: https://www.afnlp.org/conferences/ijcnlp2025/
+  description: International Joint Conference on Natural Language Processing
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2025-12-20'
+  end: '2025-12-24'
+- id: aaai26
+  title: AAAI
+  full_name: AAAI Conference on Artificial Intelligence
+  year: 2026
+  date: January 20 - 27, 2026
+  deadline: '2025-08-01 23:59:59'
+  abstract_deadline: '2025-07-25 23:59:59'
+  location: Singapore EXPO
+  city: ''
+  country: Singapore EXPO
+  url: https://aaai.org/conference/aaai/aaai-26/
+  description: AAAI Conference on Artificial Intelligence
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2026-01-20'
+  end: '2026-01-27'
+- id: icra26
+  title: ICRA
+  full_name: IEEE International Conference on Robotics and Automation
+  year: 2026
+  date: Jun 1-5, 2026
+  deadline: '2025-09-15 23:59:00'
+  abstract_deadline: ''
+  location: Vienna, Austria
+  city: Vienna
+  country: Austria
+  url: https://2026.ieee-icra.org/
+  description: IEEE International Conference on Robotics and Automation
+  timezone: UTC-8
+  tags: []
+  source: ccf
+  start: '2026-06-01'
+  end: '2026-06-05'
+- id: iclr26
+  title: ICLR
+  full_name: International Conference on Learning Representations
+  year: 2026
+  date: May 01-05, 2026
+  deadline: '2025-09-25 20:59:59'
+  abstract_deadline: '2025-09-20 20:59:59'
+  location: Brazil
+  city: ''
+  country: Brazil
+  url: https://iclr.cc/Conferences/2026
+  description: International Conference on Learning Representations
+  timezone: UTC-8
+  tags: []
+  source: ccf
+  start: '2026-05-01'
+  end: '2026-05-05'
+- id: aamas26
+  title: AAMAS
+  full_name: International Conference on Autonomous Agents and Multiagent Systems
+  year: 2026
+  date: May 27-29, 2026
+  deadline: '2025-10-08 23:59:59'
+  abstract_deadline: '2025-10-01 23:59:59'
+  location: Paphos, Cyprus
+  city: Paphos
+  country: Cyprus
+  url: https://cyprusconferences.org/aamas2026
+  description: International Conference on Autonomous Agents and Multiagent Systems
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2026-05-27'
+  end: '2026-05-29'
+- id: ijcnn2026
+  title: IJCNN
+  full_name: International Joint Conference on Neural Networks
+  year: 2026
+  date: June 21 - 26, 2026
+  deadline: '2026-01-31 23:59:59'
+  abstract_deadline: ''
+  location: Maastricht Exhibition & Congress Center, Maastricht, The Netherlands
+  city: Maastricht Exhibition & Congress Center
+  country: Maastricht, The Netherlands
+  url: https://attend.ieee.org/wcci-2026/
+  description: International Joint Conference on Neural Networks
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2026-06-21'
+  end: '2026-06-26'
+- id: eccv26
+  title: ECCV
+  full_name: European Conference on Computer Vision
+  year: 2026
+  date: September 8 - 13, 2026
+  deadline: '2026-03-06 13:00:00'
+  abstract_deadline: TBD
+  location: "Malm\xF6, Sweden"
+  city: "Malm\xF6"
+  country: Sweden
+  url: https://eccv.ecva.net/
+  description: European Conference on Computer Vision
+  timezone: UTC-8
+  tags: []
+  source: ccf
+  start: '2026-09-08'
+  end: '2026-09-13'
+- id: acl26
+  title: ACL
+  full_name: Annual Meeting of the Association for Computational Linguistics
+  year: 2026
+  date: July 2 - 7, 2026
+  deadline: TBD
+  abstract_deadline: ''
+  location: San Diego, California, United States
+  city: San Diego
+  country: California, United States
+  url: https://2026.aclweb.org/
+  description: Annual Meeting of the Association for Computational Linguistics
+  timezone: UTC-12
+  tags: []
+  source: ccf
+  start: '2026-07-02'
+  end: '2026-07-07'
+- id: icpr26
+  title: ICPR
+  full_name: International Conference on Pattern Recognition
+  year: 2026
+  date: August 17-21, 2026
+  deadline: TBD
+  abstract_deadline: ''
+  location: Lyon, France
+  city: Lyon
+  country: France
+  url: https://icpr2026.org/
+  description: International Conference on Pattern Recognition
+  timezone: AoE
+  tags: []
+  source: ccf
+  start: '2026-08-17'
+  end: '2026-08-21'

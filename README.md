@@ -43,11 +43,14 @@ To add or update a deadline:
 
 The conference data in `_data/conferences.yml` is now periodically updated by an automated process. This system is designed to help keep conference information current and reduce manual effort. Here’s how it works:
 
--   **Script**: A Python script named `update_conferences.py` (located in the root directory) is responsible for fetching new data. It attempts to find official conference websites and scrape relevant information, such as deadlines, dates, and locations.
--   **Automation**: A GitHub Actions workflow (defined in `.github/workflows/update_data.yml`) executes this script automatically on the first day of every month. If the script finds any new or updated conference information, the workflow commits these changes to the `_data/conferences.yml` file.
--   **Scope**: The script primarily focuses on updating information for conferences already listed in `_data/conferences.yml` or finding details for their future editions (e.g., if NeurIPS 2025 is listed, it will try to find NeurIPS 2026 and 2027).
--   **Accuracy**: While the script aims for accuracy, automated web scraping can be imperfect. There might be instances where the scraped data is not entirely correct or complete.
--   **Manual Edits & Overwrites**: If you manually edit entries in `_data/conferences.yml` that the script also manages (identified by a combination of conference `title` and `year`, which forms the `id`), your changes might be overwritten. The script will update entries based on what it finds. If you make manual changes to an entry that the script is likely to find (e.g., a future edition of a known conference), be aware that the script might revert these changes if it scrapes conflicting information. For conferences not typically found by the script (e.g., very niche or new conferences not yet in the base list), manual additions are less likely to be affected by automated overwrites.
+-   **Data Sources**: The system combines multiple approaches:
+    1. **CCF Repository**: Fetches structured data from the `ccfddl/ccf-deadlines` repository (most reliable)
+    2. **AI Discovery**: Uses Google's Gemini AI to discover new conferences and validate information
+    3. **Web Scraping**: Falls back to scraping conference websites for missing deadline information
+-   **Script**: `consolidated_conference_updater.py` orchestrates all data sources with smart merging
+-   **Automation**: A GitHub Actions workflow runs every Monday at 06:00 UTC
+-   **Features**: Graceful degradation (works without AI API), rate limiting, error handling
+-   **Manual Edits**: The system preserves manual contributions while keeping data current
 
 We hope this automated system enhances the timeliness and accuracy of the conference data. Contributions and corrections are still welcome, especially for information the script might miss or misinterpret.
 
