@@ -58,12 +58,14 @@ Created a new HTML generation system (`generate_html.py`) that:
 - **Gemfile**: Added Jekyll dependencies and configuration
 - **_config.yml**: Jekyll site configuration with proper exclusions
 - **Build Process**: `bundle exec jekyll build --baseurl "/ai-deadlines-mm"` now works correctly
+- **Cross-Platform Support**: Updated `Gemfile.lock` to support both Windows (`x64-mingw-ucrt`) and Linux (`x86_64-linux`) platforms
 
 The Jekyll build process:
 1. Installs dependencies with `bundle install`
 2. Builds the site with `bundle exec jekyll build --baseurl "/ai-deadlines-mm"`
 3. Generates the `_site` directory with all static assets
 4. Excludes development files (Python scripts, templates) from the build
+5. Works on both local Windows development and GitHub Actions Linux environments
 
 ## How to Use
 
