@@ -7,6 +7,7 @@ This update addresses three main issues:
 1. **Fixed subject search filters** - Added proper subject tags to all conferences
 2. **Enhanced conference information display** - Now shows all available information including abstract deadlines and notes
 3. **Added missing conferences** - Included ICWSM and LREC conferences
+4. **Fixed Jekyll build process** - Added proper Jekyll configuration for deployment
 
 ## Changes Made
 
@@ -51,6 +52,18 @@ Created a new HTML generation system (`generate_html.py`) that:
 - Created `index_template.html` as a base template
 - Uses `{{CONFERENCES}}` placeholder for dynamic content
 - Includes all necessary JavaScript and CSS references
+
+### 5. Jekyll Configuration
+
+- **Gemfile**: Added Jekyll dependencies and configuration
+- **_config.yml**: Jekyll site configuration with proper exclusions
+- **Build Process**: `bundle exec jekyll build --baseurl "/ai-deadlines-mm"` now works correctly
+
+The Jekyll build process:
+1. Installs dependencies with `bundle install`
+2. Builds the site with `bundle exec jekyll build --baseurl "/ai-deadlines-mm"`
+3. Generates the `_site` directory with all static assets
+4. Excludes development files (Python scripts, templates) from the build
 
 ## How to Use
 
