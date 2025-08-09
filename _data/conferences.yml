@@ -11,7 +11,7 @@
   url: https://2025.ieee-icra.org
   description: IEEE International Conference on Robotics and Automation
   timezone: UTC-4
-  tags: []
+  tags: [RO]
   source: ccf
   start: '2025-05-19'
   end: '2025-05-23'
@@ -28,7 +28,7 @@
   url: https://wacv2025.thecvf.com/
   description: IEEE/CVF Winter Conference on Applications of Computer Vision
   timezone: UTC-7
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2025-02-28'
   end: '2025-03-04'
@@ -45,10 +45,11 @@
   url: https://aaai.org/conference/aaai/aaai-25/
   description: AAAI Conference on Artificial Intelligence
   timezone: UTC-12
-  tags: []
+  tags: [ML, AP, KR]
   source: ccf
   start: '2025-02-25'
   end: '2025-03-04'
+  note: Abstract deadline on August 7, 2024. More info here
 - id: coling25
   title: COLING
   full_name: INTERNATIONNAL CONFERENCE ON COMPUTATIONAL LINGUISTICS
@@ -62,7 +63,7 @@
   url: https://coling2025.org/
   description: INTERNATIONNAL CONFERENCE ON COMPUTATIONAL LINGUISTICS
   timezone: UTC-12
-  tags: []
+  tags: [NLP]
   source: ccf
   start: '2025-01-19'
   end: '2025-01-24'
@@ -79,7 +80,7 @@
   url: https://fg2025.ieee-biometrics.org/
   description: International Conference on Automatic Face and Gesture Recognition
   timezone: UTC-8
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2025-05-26'
   end: '2025-05-30'
@@ -96,7 +97,7 @@
   url: https://algorithmiclearningtheory.org/alt2025/
   description: International Conference on Algorithmic Learning Theory
   timezone: UTC+0
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-02-24'
   end: '2025-02-27'
@@ -113,10 +114,11 @@
   url: https://iclr.cc/Conferences/2025
   description: International Conference on Learning Representations
   timezone: UTC-12
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-04-24'
   end: '2025-04-28'
+  note: Abstract deadline on September 27, 2024. More info here
 - id: aistats25
   title: AISTATS
   full_name: International Conference on Artificial Intelligence and Statistics
@@ -130,10 +132,11 @@
   url: https://aistats.org/aistats2025
   description: International Conference on Artificial Intelligence and Statistics
   timezone: UTC-12
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-05-03'
   end: '2025-05-05'
+  note: Abstract deadline on October 3, 2024. More info here
 - id: naacl25
   title: NAACL
   full_name: The Annual Conference of the North American Chapter of the Association
@@ -149,10 +152,11 @@
   description: The Annual Conference of the North American Chapter of the Association
     for Computational Linguistics
   timezone: UTC-12
-  tags: []
+  tags: [NLP]
   source: ccf
-  start: ''
-  end: ''
+  start: '2025-04-29'
+  end: '2025-05-04'
+  note: All submissions must be done through ARR. More info here
 - id: aamas25
   title: AAMAS
   full_name: International Conference on Autonomous Agents and Multiagent Systems
@@ -166,10 +170,11 @@
   url: https://aamas2025.org/
   description: International Conference on Autonomous Agents and Multiagent Systems
   timezone: UTC-12
-  tags: []
+  tags: [AP, ML]
   source: ccf
   start: '2025-05-19'
   end: '2025-05-23'
+  note: Abstract deadline on October 9, 2024. More info here
 - id: icaps25
   title: ICAPS
   full_name: International Conference on Automated Planning and Scheduling
@@ -183,10 +188,11 @@
   url: https://icaps25.icaps-conference.org/
   description: International Conference on Automated Planning and Scheduling
   timezone: UTC-12
-  tags: []
+  tags: [AP]
   source: ccf
   start: '2025-11-09'
   end: '2025-11-14'
+  note: Abstract deadline on October 25, 2024. More info here
 - id: cvpr25
   title: CVPR
   full_name: IEEE/CVF Conference on Computer Vision and Pattern Recognition
@@ -200,10 +206,11 @@
   url: https://cvpr.thecvf.com/Conferences/2025/CallForPapers
   description: IEEE/CVF Conference on Computer Vision and Pattern Recognition
   timezone: UTC-8
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2025-06-10'
   end: '2025-06-17'
+  note: Mandatory paper registration deadline on November 07, 2023. More info here
 - id: esann25
   title: ESANN
   full_name: European Symposium on Artificial Neural Networks, Computational Intelligence
@@ -219,7 +226,7 @@
   description: European Symposium on Artificial Neural Networks, Computational Intelligence
     and Machine Learning
   timezone: UTC-8
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-04-23'
   end: '2025-04-25'
@@ -236,7 +243,7 @@
   url: https://cpal.cc/
   description: The Conference on Parsimony and Learning
   timezone: AoE
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-03-24'
   end: '2025-03-27'
@@ -253,7 +260,7 @@
   url: https://www.cec2025.org/
   description: IEEE Congress on Evolutionary Computation
   timezone: UTC-12
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-06-08'
   end: '2025-06-12'
@@ -270,10 +277,11 @@
   url: https://2025.ijcai.org/
   description: International Joint Conference on Artificial Intelligence
   timezone: UTC-12
-  tags: []
+  tags: [ML, AP, KR]
   source: ccf
   start: '2025-08-16'
   end: '2025-08-22'
+  note: Abstract deadline on January 16, 2025. More info here
 - id: rss25
   title: RSS
   full_name: Robotics Science and Systems
@@ -287,10 +295,11 @@
   url: https://roboticsconference.org
   description: Robotics Science and Systems
   timezone: AoE
-  tags: []
+  tags: [RO]
   source: ccf
   start: '2025-06-21'
   end: '2025-06-25'
+  note: Abstract deadline on January 17, 2025. More info here
 - id: gecco25
   title: GECCO
   full_name: Genetic and Evolutionary Computation Conference
@@ -304,10 +313,11 @@
   url: https://gecco-2025.sigevo.org/HomePage
   description: Genetic and Evolutionary Computation Conference
   timezone: AoE
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-07-14'
   end: '2025-07-18'
+  note: Abstract deadline on January 22, 2025. More info here
 - id: icml25
   title: ICML
   full_name: International Conference on Machine Learning
@@ -321,10 +331,11 @@
   url: https://icml.cc/Conferences/2025
   description: International Conference on Machine Learning
   timezone: UTC-12
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-07-11'
   end: '2025-07-19'
+  note: Abstract deadline on January 23, 2025. More info here
 - id: ijcnn2025
   title: IJCNN
   full_name: International Joint Conference on Neural Networks
@@ -338,7 +349,7 @@
   url: https://2025.ijcnn.org/
   description: International Joint Conference on Neural Networks
   timezone: UTC-12
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-06-30'
   end: '2025-07-05'
@@ -355,7 +366,7 @@
   url: https://learningtheory.org/colt2025/
   description: Annual Conference on Learning Theory
   timezone: UTC-5
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-06-30'
   end: '2025-07-04'
@@ -372,7 +383,7 @@
   url: https://www.auai.org/uai2025/
   description: Conference on Uncertainty in Artificial Intelligence
   timezone: AoE
-  tags: []
+  tags: [ML, KR]
   source: ccf
   start: '2025-07-21'
   end: '2025-07-25'
@@ -389,7 +400,7 @@
   url: https://2025.aclweb.org/
   description: Annual Meeting of the Association for Computational Linguistics
   timezone: UTC-12
-  tags: []
+  tags: [NLP]
   source: ccf
   start: '2025-07-27'
   end: '2025-08-01'
@@ -406,7 +417,7 @@
   url: http://www.iros25.org/
   description: IEEE\RSJ International Conference on Intelligent Robots and Systems
   timezone: UTC-8
-  tags: []
+  tags: [RO]
   source: ccf
   start: '2025-10-19'
   end: '2025-10-25'
@@ -423,10 +434,11 @@
   url: https://www.icdar2025.com/home
   description: International Conference on Document Analysis and Recognition
   timezone: UTC+0
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2025-09-17'
   end: '2025-09-21'
+  note: Abstract deadline on February 28, 2025. More info here
 - id: iccv25
   title: ICCV
   full_name: IEEE International Conference on Computer Vision
@@ -439,11 +451,12 @@
   country: Hawaii
   url: https://iccv.thecvf.com/Conferences/2025
   description: IEEE International Conference on Computer Vision
-  timezone: UTC+0
-  tags: []
+  timezone: UTC-12
+  tags: [CV]
   source: ccf
   start: '2025-10-19'
   end: '2025-10-25'
+  note: Abstract deadline on March 4, 2025. More info here
 - id: conll25
   title: CoNLL
   full_name: Conference on Computational Natural Language Learning
@@ -457,10 +470,27 @@
   url: https://www.conll.org/
   description: Conference on Computational Natural Language Learning
   timezone: UTC-12
-  tags: []
+  tags: [NLP]
   source: ccf
   start: '2025-07-31'
   end: '2025-08-01'
+- id: icwsm25
+  title: ICWSM
+  full_name: International Conference on Web and Social Media
+  year: 2025
+  date: June 2-5, 2025
+  deadline: '2025-03-15 23:59:59'
+  abstract_deadline: ''
+  location: Munich, Germany
+  city: Munich
+  country: Germany
+  url: https://www.icwsm.org/2025/
+  description: International Conference on Web and Social Media
+  timezone: UTC-12
+  tags: [DM, ML]
+  source: manual
+  start: '2025-06-02'
+  end: '2025-06-05'
 - id: ksem25
   title: KSEM
   full_name: International Conference on Knowledge Science, Engineering and Management
@@ -474,7 +504,7 @@
   url: https://ksem2025.scimeeting.cn/
   description: International Conference on Knowledge Science, Engineering and Management
   timezone: UTC+0
-  tags: []
+  tags: [KR]
   source: ccf
   start: '2025-08-04'
   end: '2025-08-06'
@@ -491,10 +521,11 @@
   url: https://colmweb.org/cfp.html
   description: Conference on Language Modeling
   timezone: AoE
-  tags: []
+  tags: [NLP]
   source: ccf
   start: '2025-10-07'
   end: '2025-10-09'
+  note: Abstract deadline on March 22, 2025. More info here
 - id: icann2025
   title: ICANN
   full_name: International Conference on Artificial Neural Networks
@@ -508,7 +539,7 @@
   url: https://e-nns.org/icann2025/
   description: International Conference on Artificial Neural Networks
   timezone: AoE
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-09-09'
   end: '2025-09-12'
@@ -525,10 +556,27 @@
   url: https://ijcb2025.ieee-biometrics.org/
   description: International Joint Conference on Biometrics
   timezone: UTC-7
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2025-09-08'
   end: '2025-09-11'
+- id: lrec25
+  title: LREC
+  full_name: International Conference on Language Resources and Evaluation
+  year: 2025
+  date: May 20-25, 2025
+  deadline: '2025-04-15 23:59:59'
+  abstract_deadline: ''
+  location: Turin, Italy
+  city: Turin
+  country: Italy
+  url: https://lrec2025.lrec-conf.org/
+  description: International Conference on Language Resources and Evaluation
+  timezone: UTC-12
+  tags: [NLP]
+  source: manual
+  start: '2025-05-20'
+  end: '2025-05-25'
 - id: nlpcc2025
   title: NLPCC
   full_name: CCF International Conference on Natural Language Processing and Chinese
@@ -544,7 +592,7 @@
   description: CCF International Conference on Natural Language Processing and Chinese
     Computing
   timezone: UTC+8
-  tags: []
+  tags: [NLP]
   source: ccf
   start: '2025-08-08'
   end: '2025-08-10'
@@ -561,7 +609,7 @@
   url: https://www.corl.org/
   description: The Conference on Robot Learning
   timezone: AoE
-  tags: []
+  tags: [RO, ML]
   source: ccf
   start: '2025-09-27'
   end: '2025-09-30'
@@ -578,10 +626,11 @@
   url: https://ecai2025.org/deadlines/
   description: European Conference on Artificial Intelligence
   timezone: UTC-12
-  tags: []
+  tags: [ML, AP, KR]
   source: ccf
   start: '2025-10-25'
   end: '2025-10-30'
+  note: Abstract deadline on April 29, 2025. More info here
 - id: krd25
   title: KR
   full_name: International Conference on Principles of Knowledge Representation and
@@ -597,10 +646,11 @@
   description: International Conference on Principles of Knowledge Representation
     and Reasoning
   timezone: UTC-12
-  tags: []
+  tags: [KR]
   source: ccf
   start: '2025-11-11'
   end: '2025-11-17'
+  note: Abstract deadline on May 7, 2025. More info here
 - id: nips25
   title: NeurIPS
   full_name: Conference on Neural Information Processing Systems
@@ -614,10 +664,11 @@
   url: https://neurips.cc/Conferences/2025
   description: Conference on Neural Information Processing Systems
   timezone: AoE
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-12-02'
   end: '2025-12-07'
+  note: Abstract deadline on May 11, 2025. More info here
 - id: bmvc25
   title: BMVC
   full_name: British Machine Vision Conference
@@ -631,10 +682,11 @@
   url: https://bmvc2025.bmva.org/
   description: British Machine Vision Conference
   timezone: UTC+0
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2025-11-24'
   end: '2025-11-27'
+  note: Abstract deadline on May 13, 2025. More info here
 - id: emnlp25
   title: EMNLP
   full_name: The annual Conference on Empirical Methods in Natural Language Processing
@@ -648,7 +700,7 @@
   url: https://2025.emnlp.org/
   description: The annual Conference on Empirical Methods in Natural Language Processing
   timezone: UTC-12
-  tags: []
+  tags: [NLP]
   source: ccf
   start: '2025-11-05'
   end: '2025-11-09'
@@ -665,7 +717,7 @@
   url: https://iconip2025.apnns.org/
   description: International Conference on Neural Information Processing
   timezone: UTC-12
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-11-20'
   end: '2025-11-24'
@@ -682,7 +734,7 @@
   url: https://www.acml-conf.org/2025/
   description: Asian Conference on Machine Learning
   timezone: AoE
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2025-12-09'
   end: '2025-12-12'
@@ -699,7 +751,7 @@
   url: https://www.pricai.org/2025/
   description: Pacific Rim International Conference on Artificial Intelligence
   timezone: UTC-12
-  tags: []
+  tags: [ML, AP, KR]
   source: ccf
   start: '2025-11-17'
   end: '2025-11-21'
@@ -716,10 +768,11 @@
   url: https://wacv.thecvf.com/
   description: IEEE/CVF Winter Conference on Applications of Computer Vision
   timezone: AoE
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2026-03-06'
   end: '2026-03-10'
+  note: Abstract deadline on July 11, 2025. More info here
 - id: ijcnlp2025
   title: IJCNLP
   full_name: International Joint Conference on Natural Language Processing
@@ -733,7 +786,7 @@
   url: https://www.afnlp.org/conferences/ijcnlp2025/
   description: International Joint Conference on Natural Language Processing
   timezone: UTC-12
-  tags: []
+  tags: [NLP]
   source: ccf
   start: '2025-12-20'
   end: '2025-12-24'
@@ -750,10 +803,11 @@
   url: https://aaai.org/conference/aaai/aaai-26/
   description: AAAI Conference on Artificial Intelligence
   timezone: UTC-12
-  tags: []
+  tags: [ML, AP, KR]
   source: ccf
   start: '2026-01-20'
   end: '2026-01-27'
+  note: Abstract deadline on July 25, 2025. More info here
 - id: icra26
   title: ICRA
   full_name: IEEE International Conference on Robotics and Automation
@@ -767,7 +821,7 @@
   url: https://2026.ieee-icra.org/
   description: IEEE International Conference on Robotics and Automation
   timezone: UTC-8
-  tags: []
+  tags: [RO]
   source: ccf
   start: '2026-06-01'
   end: '2026-06-05'
@@ -784,10 +838,11 @@
   url: https://iclr.cc/Conferences/2026
   description: International Conference on Learning Representations
   timezone: UTC-8
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2026-05-01'
   end: '2026-05-05'
+  note: Abstract deadline on September 20, 2025. More info here
 - id: aamas26
   title: AAMAS
   full_name: International Conference on Autonomous Agents and Multiagent Systems
@@ -801,10 +856,11 @@
   url: https://cyprusconferences.org/aamas2026
   description: International Conference on Autonomous Agents and Multiagent Systems
   timezone: UTC-12
-  tags: []
+  tags: [AP, ML]
   source: ccf
   start: '2026-05-27'
   end: '2026-05-29'
+  note: Abstract deadline on October 1, 2025. More info here
 - id: ijcnn2026
   title: IJCNN
   full_name: International Joint Conference on Neural Networks
@@ -818,7 +874,7 @@
   url: https://attend.ieee.org/wcci-2026/
   description: International Joint Conference on Neural Networks
   timezone: UTC-12
-  tags: []
+  tags: [ML]
   source: ccf
   start: '2026-06-21'
   end: '2026-06-26'
@@ -835,7 +891,7 @@
   url: https://eccv.ecva.net/
   description: European Conference on Computer Vision
   timezone: UTC-8
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2026-09-08'
   end: '2026-09-13'
@@ -852,7 +908,7 @@
   url: https://2026.aclweb.org/
   description: Annual Meeting of the Association for Computational Linguistics
   timezone: UTC-12
-  tags: []
+  tags: [NLP]
   source: ccf
   start: '2026-07-02'
   end: '2026-07-07'
@@ -869,7 +925,7 @@
   url: https://icpr2026.org/
   description: International Conference on Pattern Recognition
   timezone: AoE
-  tags: []
+  tags: [CV]
   source: ccf
   start: '2026-08-17'
   end: '2026-08-21'

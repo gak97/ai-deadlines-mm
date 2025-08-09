@@ -133,8 +133,44 @@ footer {
 }
 
 .note {
-  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.conf-subjects {
+  margin-top: 8px;
   margin-bottom: 5px;
+}
+
+.conf-sub {
+  color: rgb(36, 101, 191);
+  background: rgba(236, 240, 241, 0.7);
+  font-size: 13px;
+  padding: 3px 5px;
+  margin-right: 8px;
+  cursor: pointer;
+  font-weight: 300;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 3px;
+}
+
+.conf-sub:hover {
+  background: rgba(36, 101, 191, 0.1);
+  color: rgb(36, 101, 191);
+}
+
+.conf-sub::selection {
+  background: #0097e6;
+}
+
+.abstract-deadline {
+  color: #e74c3c;
+  font-weight: 500;
+  margin-top: 5px;
+  font-size: 14px;
 }
 
 .timer,
@@ -159,20 +195,6 @@ footer {
 
 #conf-key-facts {
   margin-bottom: 10px;
-}
-
-.conf-sub {
-  color: rgb(36, 101, 191);
-  background: rgba(236, 240, 241, 0.7);
-  font-size: 13px;
-  padding: 3px 5px;
-  margin-right: 8px;
-  cursor: pointer;
-  font-weight: 300;
-}
-
-.conf-sub::selection {
-  background: #0097e6;
 }
 
 .checkbox input[type="checkbox"]:checked:after {
@@ -264,34 +286,54 @@ footer {
 
 @media only screen and (max-width: 576px) {
   #conf-timer {
-    font-size: 36px;
-  }
-  .conf-place {
-    display: none;
-  }
-  .conf-date {
-    display: none;
-  }
-  .note {
-    display: none;
-  }
-  .conf-row {
-    margin-bottom: 7px;
-  }
-  .timer {
-    display: none;
-  }
-  .timer-small {
-    text-align: right;
-    display: grid;
-  }
-  .conf-title {
-    display: none;
-  }
-  .conf-title-small {
-    display: inline;
+    font-size: 48px;
   }
 
+  .conf-place {
+    display: block;
+  }
+
+  .conf-date {
+    display: block;
+  }
+
+  .note {
+    font-size: 13px;
+  }
+
+  .conf-subjects {
+    margin-top: 5px;
+  }
+
+  .conf-sub {
+    font-size: 12px;
+    padding: 2px 4px;
+    margin-right: 5px;
+  }
+
+  .abstract-deadline {
+    font-size: 13px;
+  }
+
+  .conf-row {
+    margin-bottom: 5px;
+  }
+
+  .timer {
+    font-size: 24px;
+  }
+
+  .timer-small {
+    font-size: 18px;
+  }
+
+  .conf-title {
+    font-size: 18px;
+  }
+
+  .conf-title-small {
+    font-size: 16px;
+  }
 }
 
 @media only screen and (max-width: 375px) {
