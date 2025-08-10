@@ -260,6 +260,16 @@ footer {
   border-bottom: 2px solid #bb2d3b;
 }
 
+#past_confs h3 {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  color: #666;
+  font-size: 22px;
+  font-weight: 400;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
 .badge-link {
   vertical-align: middle; 
   margin-bottom: 3px;

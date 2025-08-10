@@ -140,13 +140,47 @@ def generate_main_html():
     """Generate the main index.html file."""
     conferences = load_conferences()
     
-    # Sort conferences by deadline
-    conferences.sort(key=lambda x: x.get('deadline', ''))
+    # Get current date for filtering
+    now = datetime.now()
+    six_months_ago = datetime(now.year, now.month - 6, now.day) if now.month > 6 else datetime(now.year - 1, now.month + 6, now.day)
     
-    # Generate HTML for each conference
-    conference_html = ''
+    # Separate conferences into upcoming and past
+    upcoming_conferences = []
+    past_conferences = []
+    
     for conf in conferences:
-        conference_html += generate_conference_html(conf)
+        deadline_str = conf.get('deadline', '')
+        if deadline_str:
+            try:
+                deadline = datetime.strptime(deadline_str.split()[0], '%Y-%m-%d')
+                if deadline < now:
+                    # Only include past conferences from the last 6 months
+                    if deadline >= six_months_ago:
+                        past_conferences.append(conf)
+                else:
+                    upcoming_conferences.append(conf)
+            except ValueError:
+                # If deadline parsing fails, treat as upcoming
+                upcoming_conferences.append(conf)
+        else:
+            # If no deadline, treat as upcoming
+            upcoming_conferences.append(conf)
+    
+    # Sort conferences by deadline
+    upcoming_conferences.sort(key=lambda x: x.get('deadline', ''))
+    past_conferences.sort(key=lambda x: x.get('deadline', ''), reverse=True)  # Most recent first
+    
+    # Generate HTML for upcoming conferences
+    upcoming_html = ''
+    for conf in upcoming_conferences:
+        upcoming_html += generate_conference_html(conf)
+    
+    # Generate HTML for past conferences
+    past_html = ''
+    if past_conferences:
+        past_html = '<h3>Past Events (Last 6 Months)</h3>'
+        for conf in past_conferences:
+            past_html += generate_conference_html(conf)
     
     # Generate JavaScript for conference data processing
     conference_data_js = generate_conference_data_js(conferences)
@@ -155,19 +189,24 @@ def generate_main_html():
     with open('index_template.html', 'r', encoding='utf-8') as f:
         template = f.read()
     
-    # Replace the placeholder with generated conference HTML
-    final_html = template.replace('{{CONFERENCES}}', conference_html)
+    # Replace the placeholders with generated HTML
+    final_html = template.replace('{{CONFERENCES}}', upcoming_html)
+    final_html = final_html.replace('<div id="past_confs">\n          \n        </div>', f'<div id="past_confs">\n          {past_html}\n        </div>')
     final_html = final_html.replace('// Conference data and processing will be added here by the generation script', conference_data_js)
     
     # Write the final HTML
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(final_html)
     
-    print(f"Generated HTML for {len(conferences)} conferences")
+    print(f"Generated HTML for {len(upcoming_conferences)} upcoming conferences and {len(past_conferences)} past conferences (last 6 months)")
 
 def generate_conference_data_js(conferences):
     """Generate JavaScript for conference data processing."""
     js_lines = []
+    
+    # Get current date for filtering
+    now = datetime.now()
+    six_months_ago = datetime(now.year, now.month - 6, now.day) if now.month > 6 else datetime(now.year - 1, now.month + 6, now.day)
     
     for conf in conferences:
         conf_id = conf.get('id', '')
@@ -175,6 +214,14 @@ def generate_conference_data_js(conferences):
         timezone = conf.get('timezone', 'UTC-12')
         
         if deadline and deadline != '':
+            try:
+                deadline_date = datetime.strptime(deadline.split()[0], '%Y-%m-%d')
+                is_past = deadline_date < now
+                is_within_six_months = deadline_date >= six_months_ago
+            except ValueError:
+                is_past = False
+                is_within_six_months = True
+            
             js_lines.append(f'''
         // Process {conf_id}
         if (typeof moment !== 'undefined') {{
@@ -194,7 +241,6 @@ def generate_conference_data_js(conferences):
             }});
           }} else {{
             $('#{conf_id}').addClass('past');
-            $('#{conf_id}').appendTo($("#past_confs"));
             $('#{conf_id} .timer').replaceWith($('#{conf_id} .deadline'));
             $('#{conf_id} .timer-small').replaceWith($('#{conf_id} .deadline'));
             $('#{conf_id} .calendar').remove();

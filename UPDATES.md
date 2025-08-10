@@ -8,6 +8,7 @@ This update addresses three main issues:
 2. **Enhanced conference information display** - Now shows all available information including abstract deadlines and notes
 3. **Added missing conferences** - Included ICWSM and LREC conferences
 4. **Fixed Jekyll build process** - Added proper Jekyll configuration for deployment
+5. **Added past events section** - Past conferences are now separated and limited to the last 6 months
 
 ## Changes Made
 
@@ -66,6 +67,20 @@ The Jekyll build process:
 3. Generates the `_site` directory with all static assets
 4. Excludes development files (Python scripts, templates) from the build
 5. Works on both local Windows development and GitHub Actions Linux environments
+
+### 6. Past Events Management
+
+- **Automatic Separation**: Conferences are automatically separated into upcoming and past events
+- **6-Month Limit**: Only past conferences from the last 6 months are displayed
+- **Visual Separation**: Past events are placed in a dedicated section with a clear header
+- **Chronological Order**: Past events are sorted with most recent first
+- **Styling**: Added CSS styling for the "Past Events" section header
+
+### 7. GitHub Actions Workflow Fix
+
+- **Fixed File Preservation**: Updated the deployment workflow to preserve essential files
+- **Preserved Files**: The workflow now preserves `_config.yml`, `generate_html.py`, `index_template.html`, and other development files
+- **Prevents Deletion**: Fixed the issue where important files were being automatically deleted after workflow execution
 
 ## How to Use
 
