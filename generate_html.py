@@ -207,6 +207,12 @@ def main():
     """Main function."""
     print("Generating HTML from conferences.yml...")
     generate_main_html()
+    
+    # Also generate conference detail pages
+    print("Generating conference detail pages...")
+    import subprocess
+    subprocess.run(["python", "generate_conference_pages.py"], check=True)
+    
     print("HTML generation complete!")
 
 if __name__ == "__main__":

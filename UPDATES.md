@@ -79,8 +79,22 @@ The Jekyll build process:
 ### 7. GitHub Actions Workflow Fix
 
 - **Fixed File Preservation**: Updated the deployment workflow to preserve essential files
-- **Preserved Files**: The workflow now preserves `_config.yml`, `generate_html.py`, `index_template.html`, and other development files
+- **Preserved Files**: The workflow now preserves `_config.yml`, `generate_html.py`, `generate_conference_pages.py`, `index_template.html`, and other development files
 - **Prevents Deletion**: Fixed the issue where important files were being automatically deleted after workflow execution
+- **Recovery**: Recreated missing `Gemfile` after it was accidentally deleted by the previous workflow run
+
+### 8. Conference Detail Pages
+
+- **Dynamic Generation**: Created `generate_conference_pages.py` to generate dynamic conference detail pages
+- **Complete Information**: Each conference detail page now displays:
+  - Conference date with calendar icon
+  - Location with map link
+  - Website link with globe icon
+  - Subject tags and badges
+  - Deadline countdown timers
+  - Timezone conversion
+- **Data-Driven**: All conference information is now pulled from `_data/conferences.yml`
+- **Automatic Updates**: Conference detail pages are automatically regenerated when running `generate_html.py`
 
 ## How to Use
 
@@ -117,7 +131,10 @@ The subject filter now works correctly:
 │   └── conferences.yml          # Conference data with tags
 ├── static/css/
 │   └── deadlines.css            # Updated styling
+├── conference/
+│   └── index.html               # Generated conference detail pages
 ├── generate_html.py             # HTML generation script
+├── generate_conference_pages.py # Conference detail page generator
 ├── index_template.html          # HTML template
 ├── index.html                   # Generated main page
 └── UPDATES.md                   # This file
