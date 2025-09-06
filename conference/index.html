@@ -126,12 +126,12 @@
           <div class="meta col-sm-12 col-md-6">
             <span class="deadline-time"></span>
           </div>
-              <div class="meta col-sm-12 col-md-6">
-                Deadline in your local <span class="local-timezone">America/New_York</span> timezone:
-              </div>
-              <div class="local-timezone-hide meta col-sm-12 col-md-6">
-                <span class="deadline-local-time"></span>
-              </div>
+          <div class="meta col-sm-12 col-md-6">
+            Deadline in your local <span class="local-timezone">Europe/London</span> timezone:
+          </div>
+          <div class="local-timezone-hide meta col-sm-12 col-md-6">
+            <span class="deadline-local-time"></span>
+          </div>
           </div>
         <div id="conf-deadline-timer" class="row">
           <div id="conf-timer" class="col-12">
@@ -241,13 +241,9 @@ function createCalendarFromObject(data) {
 
 
         addUtcTimeZones();
-        try {
-          var local_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          $('.local-timezone').text(local_timezone.toString());
-        }
-        catch(err) {
-          $('.local-timezone-hide').hide();
-        }
+        // Always show London conversion
+        var london_timezone = 'Europe/London';
+        $('.local-timezone').text(london_timezone);
 
         
 
@@ -2116,18 +2112,40 @@ function createCalendarFromObject(data) {
                 }
               }
 
-              $('#conf-date').text("TBD 2026");
-              $('#conf-place').text("TBD");
-              $('#conf-place').attr('href', "https://maps.google.com/?q=TBD");
-              $('#conf-website').text("https://www.eacl.org");
-              $('#conf-website').attr('href', "https://www.eacl.org");
+              $('#conf-date').text("March 24-29, 2026");
+              $('#conf-place').text("Rabat, Morocco");
+              $('#conf-place').attr('href', "https://maps.google.com/?q=Rabat, Morocco");
+              $('#conf-website').text("https://2026.eacl.org/");
+              $('#conf-website').attr('href', "https://2026.eacl.org/");
 
               $('#conf-paperslink-div').hide();
               $('#conf-pwclink-div').hide();
 
-              // No published deadline yet
-              $('#conf-deadline-info').hide();
-              $('#conf-deadline-timer').hide();
+              // Deadline processing (ARR submission deadline)
+              if ("2025-10-06 23:59:59" != "") {
+                var timezone = "UTC-12"; // AoE
+                var confDeadline = moment.tz("2025-10-06 23:59:59", timezone);
+                var conferenceDeadlineCalendar = createCalendarFromObject({
+                  id: 'eacl26',
+                  title: 'EACL 2026 deadline',
+                  date: confDeadline.toDate(),
+                  duration: 60,
+                })
+                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
+                  $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
+                });
+                $('.deadline-time').html(confDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+                try {
+                  var localConfDeadline = moment.tz(confDeadline, london_timezone);
+                  $('.deadline-local-time').html(localConfDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+                } catch(err) {
+                  console.log('Error converting to Europe/London timezone.');
+                }
+              } else {
+                $('#conf-deadline-info').hide();
+                $('#conf-deadline-timer').hide();
+              }
             }
 
             // LREC 2026
@@ -2147,18 +2165,40 @@ function createCalendarFromObject(data) {
                 }
               }
 
-              $('#conf-date').text("TBD 2026");
-              $('#conf-place').text("TBD");
-              $('#conf-place').attr('href', "https://maps.google.com/?q=TBD");
-              $('#conf-website').text("https://lrec-conf.org");
-              $('#conf-website').attr('href', "https://lrec-conf.org");
+              $('#conf-date').text("May 11-16, 2026");
+              $('#conf-place').text("Palma, Mallorca, Spain");
+              $('#conf-place').attr('href', "https://maps.google.com/?q=Palma, Mallorca, Spain");
+              $('#conf-website').text("https://lrec2026.info/");
+              $('#conf-website').attr('href', "https://lrec2026.info/");
 
               $('#conf-paperslink-div').hide();
               $('#conf-pwclink-div').hide();
 
-              // No published deadline yet
-              $('#conf-deadline-info').hide();
-              $('#conf-deadline-timer').hide();
+              // Deadline processing (paper submission)
+              if ("2025-10-17 23:59:59" != "") {
+                var timezone = "UTC-12"; // AoE
+                var confDeadline = moment.tz("2025-10-17 23:59:59", timezone);
+                var conferenceDeadlineCalendar = createCalendarFromObject({
+                  id: 'lrec26',
+                  title: 'LREC 2026 deadline',
+                  date: confDeadline.toDate(),
+                  duration: 60,
+                })
+                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
+                  $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
+                });
+                $('.deadline-time').html(confDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+                try {
+                  var localConfDeadline = moment.tz(confDeadline, london_timezone);
+                  $('.deadline-local-time').html(localConfDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+                } catch(err) {
+                  console.log('Error converting to Europe/London timezone.');
+                }
+              } else {
+                $('#conf-deadline-info').hide();
+                $('#conf-deadline-timer').hide();
+              }
             }
 
             // ICWSM 2026
@@ -2178,18 +2218,40 @@ function createCalendarFromObject(data) {
                 }
               }
 
-              $('#conf-date').text("TBD 2026");
-              $('#conf-place').text("TBD");
-              $('#conf-place').attr('href', "https://maps.google.com/?q=TBD");
-              $('#conf-website').text("https://www.icwsm.org");
-              $('#conf-website').attr('href', "https://www.icwsm.org");
+              $('#conf-date').text("May 27-29, 2026");
+              $('#conf-place').text("Los Angeles, CA, USA");
+              $('#conf-place').attr('href', "https://maps.google.com/?q=Los Angeles, CA, USA");
+              $('#conf-website').text("https://www.icwsm.org/2026/index.html");
+              $('#conf-website').attr('href', "https://www.icwsm.org/2026/index.html");
 
               $('#conf-paperslink-div').hide();
               $('#conf-pwclink-div').hide();
 
-              // No published deadline yet
-              $('#conf-deadline-info').hide();
-              $('#conf-deadline-timer').hide();
+              // Deadline processing (next submission round)
+              if ("2025-09-15 23:59:59" != "") {
+                var timezone = "UTC-12"; // AoE
+                var confDeadline = moment.tz("2025-09-15 23:59:59", timezone);
+                var conferenceDeadlineCalendar = createCalendarFromObject({
+                  id: 'icwsm26',
+                  title: 'ICWSM 2026 deadline',
+                  date: confDeadline.toDate(),
+                  duration: 60,
+                })
+                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
+                  $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
+                });
+                $('.deadline-time').html(confDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+                try {
+                  var localConfDeadline = moment.tz(confDeadline, london_timezone);
+                  $('.deadline-local-time').html(localConfDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+                } catch(err) {
+                  console.log('Error converting to Europe/London timezone.');
+                }
+              } else {
+                $('#conf-deadline-info').hide();
+                $('#conf-deadline-timer').hide();
+              }
             }
 
             if (conf == "ksem25") {
@@ -2236,7 +2298,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
+                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
 
                 // render countdown timer
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
@@ -2302,7 +2364,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
+                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
 
                 // render countdown timer
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
@@ -2368,7 +2430,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
+                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
 
                 // render countdown timer
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
@@ -3496,12 +3558,12 @@ function createCalendarFromObject(data) {
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
                   $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
                 });
-                $('.deadline-time').html(confDeadline.toString());
+                $('.deadline-time').html(confDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
 
                 // convert deadline to local timezone
                 try {
-                  var localConfDeadline = moment.tz(confDeadline, local_timezone);
-                  $('.deadline-local-time').html(localConfDeadline.toString());
+                  var localConfDeadline = moment.tz(confDeadline, london_timezone);
+                  $('.deadline-local-time').html(localConfDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
                 }
                 catch(err) {
                   console.log("Error converting to local timezone.");

@@ -183,9 +183,9 @@
             <div class="row">
               <div class="col-12 col-sm-6">
                 <div class="meta">
-                  <span class="conf-date">TBD 2026.</span>
+                  <span class="conf-date">March 24-29, 2026.</span>
                   <span class="conf-place">
-                    <a href="http://maps.google.com/?q=TBD">TBD</a>.
+                    <a href="http://maps.google.com/?q=Rabat, Morocco">Rabat, Morocco</a>.
                   </span>
                 </div>
                 <div class="conf-subjects">
@@ -231,9 +231,9 @@
             <div class="row">
               <div class="col-12 col-sm-6">
                 <div class="meta">
-                  <span class="conf-date">TBD 2026.</span>
+                  <span class="conf-date">May 11-16, 2026.</span>
                   <span class="conf-place">
-                    <a href="http://maps.google.com/?q=TBD">TBD</a>.
+                    <a href="http://maps.google.com/?q=Palma, Mallorca, Spain">Palma, Mallorca, Spain</a>.
                   </span>
                 </div>
                 <div class="conf-subjects">
@@ -279,9 +279,9 @@
             <div class="row">
               <div class="col-12 col-sm-6">
                 <div class="meta">
-                  <span class="conf-date">TBD 2026.</span>
+                  <span class="conf-date">May 27-29, 2026.</span>
                   <span class="conf-place">
-                    <a href="http://maps.google.com/?q=TBD">TBD</a>.
+                    <a href="http://maps.google.com/?q=Los Angeles, CA, USA">Los Angeles, CA, USA</a>.
                   </span>
                 </div>
                 <div class="conf-subjects">
@@ -4697,6 +4697,75 @@ update_filtering({ subs: subs, all_subs: all_subs });
     $("#past-deadlines-heading").hide();
   }
 })();
+
+        // Process EACL 2026
+        if (typeof moment !== 'undefined') {
+          var deadline = moment.tz('2025-10-06 23:59:59', 'UTC-12');
+          var now = moment();
+          var diff = deadline.diff(now, 'seconds');
+          $('#eacl26').attr('diff', diff);
+          $('#eacl26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+          if (diff > 0) {
+            $('#eacl26 .timer').countdown(deadline.toDate(), function(event) {
+              $(this).html(event.strftime('%D days %H:%M:%S'));
+            });
+            $('#eacl26 .timer-small').countdown(deadline.toDate(), function(event) {
+              $(this).html(event.strftime('%D days %H:%M:%S'));
+            });
+          } else {
+            $('#eacl26').addClass('past');
+            $('#eacl26').appendTo($("#past_confs"));
+            $('#eacl26 .timer').replaceWith($('#eacl26 .deadline'));
+            $('#eacl26 .timer-small').replaceWith($('#eacl26 .deadline'));
+            $('#eacl26 .calendar').remove();
+          }
+        }
+
+        // Process LREC 2026
+        if (typeof moment !== 'undefined') {
+          var deadline = moment.tz('2025-10-17 23:59:59', 'UTC-12');
+          var now = moment();
+          var diff = deadline.diff(now, 'seconds');
+          $('#lrec26').attr('diff', diff);
+          $('#lrec26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+          if (diff > 0) {
+            $('#lrec26 .timer').countdown(deadline.toDate(), function(event) {
+              $(this).html(event.strftime('%D days %H:%M:%S'));
+            });
+            $('#lrec26 .timer-small').countdown(deadline.toDate(), function(event) {
+              $(this).html(event.strftime('%D days %H:%M:%S'));
+            });
+          } else {
+            $('#lrec26').addClass('past');
+            $('#lrec26').appendTo($("#past_confs"));
+            $('#lrec26 .timer').replaceWith($('#lrec26 .deadline'));
+            $('#lrec26 .timer-small').replaceWith($('#lrec26 .deadline'));
+            $('#lrec26 .calendar').remove();
+          }
+        }
+
+        // Process ICWSM 2026 (next submission round)
+        if (typeof moment !== 'undefined') {
+          var deadline = moment.tz('2025-09-15 23:59:59', 'UTC-12');
+          var now = moment();
+          var diff = deadline.diff(now, 'seconds');
+          $('#icwsm26').attr('diff', diff);
+          $('#icwsm26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+          if (diff > 0) {
+            $('#icwsm26 .timer').countdown(deadline.toDate(), function(event) {
+              $(this).html(event.strftime('%D days %H:%M:%S'));
+            });
+            $('#icwsm26 .timer-small').countdown(deadline.toDate(), function(event) {
+              $(this).html(event.strftime('%D days %H:%M:%S'));
+            });
+          } else {
+            $('#icwsm26').addClass('past');
+            $('#icwsm26').appendTo($("#past_confs"));
+            $('#icwsm26 .timer').replaceWith($('#icwsm26 .deadline'));
+            $('#icwsm26 .timer-small').replaceWith($('#icwsm26 .deadline'));
+            $('#icwsm26 .calendar').remove();
+          }
+        }
 
         // Event handler on sub badge click
         $('.conf-sub').click(function (e) {
