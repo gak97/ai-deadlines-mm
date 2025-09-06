@@ -2099,6 +2099,99 @@ function createCalendarFromObject(data) {
               }
             }
 
+            // EACL 2026
+            if (conf == "eacl26") {
+              $('#conf-title-href').text("EACL 2026");
+              $('#conf-title-href').attr('href', "/ai-deadlines-mm/conference?id=eacl26");
+              $('#conf-full-name').text("Conference of the European Chapter of the Association for Computational Linguistics");
+
+              var subs = 'NLP'.split(',');
+              for (let i = 0; i < subs.length; i++) {
+                var sub = subs[i].replace(" ", "");
+                if (sub && sub2name[sub]) {
+                  var sub_element = document.createElement('span');
+                  sub_element.className = "conf-sub conf-" + sub;
+                  sub_element.textContent = sub2name[sub];
+                  $('#conf-subs').append(sub_element);
+                }
+              }
+
+              $('#conf-date').text("TBD 2026");
+              $('#conf-place').text("TBD");
+              $('#conf-place').attr('href', "https://maps.google.com/?q=TBD");
+              $('#conf-website').text("https://www.eacl.org");
+              $('#conf-website').attr('href', "https://www.eacl.org");
+
+              $('#conf-paperslink-div').hide();
+              $('#conf-pwclink-div').hide();
+
+              // No published deadline yet
+              $('#conf-deadline-info').hide();
+              $('#conf-deadline-timer').hide();
+            }
+
+            // LREC 2026
+            if (conf == "lrec26") {
+              $('#conf-title-href').text("LREC 2026");
+              $('#conf-title-href').attr('href', "/ai-deadlines-mm/conference?id=lrec26");
+              $('#conf-full-name').text("International Conference on Language Resources and Evaluation");
+
+              var subs = 'NLP'.split(',');
+              for (let i = 0; i < subs.length; i++) {
+                var sub = subs[i].replace(" ", "");
+                if (sub && sub2name[sub]) {
+                  var sub_element = document.createElement('span');
+                  sub_element.className = "conf-sub conf-" + sub;
+                  sub_element.textContent = sub2name[sub];
+                  $('#conf-subs').append(sub_element);
+                }
+              }
+
+              $('#conf-date').text("TBD 2026");
+              $('#conf-place').text("TBD");
+              $('#conf-place').attr('href', "https://maps.google.com/?q=TBD");
+              $('#conf-website').text("https://lrec-conf.org");
+              $('#conf-website').attr('href', "https://lrec-conf.org");
+
+              $('#conf-paperslink-div').hide();
+              $('#conf-pwclink-div').hide();
+
+              // No published deadline yet
+              $('#conf-deadline-info').hide();
+              $('#conf-deadline-timer').hide();
+            }
+
+            // ICWSM 2026
+            if (conf == "icwsm26") {
+              $('#conf-title-href').text("ICWSM 2026");
+              $('#conf-title-href').attr('href', "/ai-deadlines-mm/conference?id=icwsm26");
+              $('#conf-full-name').text("International AAAI Conference on Web and Social Media");
+
+              var subs = 'DM,ML'.split(',');
+              for (let i = 0; i < subs.length; i++) {
+                var sub = subs[i].replace(" ", "");
+                if (sub && sub2name[sub]) {
+                  var sub_element = document.createElement('span');
+                  sub_element.className = "conf-sub conf-" + sub;
+                  sub_element.textContent = sub2name[sub];
+                  $('#conf-subs').append(sub_element);
+                }
+              }
+
+              $('#conf-date').text("TBD 2026");
+              $('#conf-place').text("TBD");
+              $('#conf-place').attr('href', "https://maps.google.com/?q=TBD");
+              $('#conf-website').text("https://www.icwsm.org");
+              $('#conf-website').attr('href', "https://www.icwsm.org");
+
+              $('#conf-paperslink-div').hide();
+              $('#conf-pwclink-div').hide();
+
+              // No published deadline yet
+              $('#conf-deadline-info').hide();
+              $('#conf-deadline-timer').hide();
+            }
+
             if (conf == "ksem25") {
               $('#conf-title-href').text("KSEM 2025");
               $('#conf-title-href').attr('href', "/ai-deadlines-mm/conference?id=ksem25");
@@ -3381,8 +3474,8 @@ function createCalendarFromObject(data) {
               $('#conf-paperslink-div').hide();
               $('#conf-pwclink-div').hide();
               
-              var twitter_slug = '<a href="https://twitter.com/share" class="twitter-share-button" data-text="Countdown to the #ICLR2026 deadline!" data-show-count="false" style="font-size:13px;">Tweet</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8">';
-              $('#twitter-box').html(twitter_slug);
+              // Twitter button (script loaded globally in template)
+              $('#twitter-box').html('<a href="https://twitter.com/share" class="twitter-share-button" data-text="Countdown to the #ICLR2026 deadline!" data-show-count="false" style="font-size:13px;">Tweet</a>');
               
               // Deadline processing
               if ("2025-09-25 20:59:59" && "2025-09-25 20:59:59" != "") {
@@ -3447,8 +3540,7 @@ function createCalendarFromObject(data) {
               $('#conf-paperslink-div').hide();
               $('#conf-pwclink-div').hide();
               
-              var twitter_slug = '<a href="https://twitter.com/share" class="twitter-share-button" data-text="Countdown to the #AAMAS2026 deadline!" data-show-count="false" style="font-size:13px;">Tweet</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8">';
-              $('#twitter-box').html(twitter_slug);
+              $('#twitter-box').html('<a href="https://twitter.com/share" class="twitter-share-button" data-text="Countdown to the #AAMAS2026 deadline!" data-show-count="false" style="font-size:13px;">Tweet</a>');
               
               // Deadline processing
               if ("2025-10-08 23:59:59" && "2025-10-08 23:59:59" != "") {
