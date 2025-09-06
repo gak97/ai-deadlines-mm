@@ -2131,7 +2131,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
                   $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
                 });
@@ -2184,7 +2184,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
                   $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
                 });
@@ -2237,7 +2237,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
                   $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
                 });
@@ -2298,7 +2298,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
 
                 // render countdown timer
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
@@ -2364,7 +2364,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
 
                 // render countdown timer
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
@@ -2430,7 +2430,7 @@ function createCalendarFromObject(data) {
                   date: confDeadline.toDate(),
                   duration: 60,
                 })
-                document.querySelector('#conference-deadline').innerHTML = conferenceDeadlineCalendar;
+                document.querySelector('#conference-deadline').appendChild(conferenceDeadlineCalendar);
 
                 // render countdown timer
                 $('#conf-timer').countdown(confDeadline.toDate(), function(event) {
