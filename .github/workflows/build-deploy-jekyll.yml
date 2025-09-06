@@ -34,30 +34,72 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-          # Clean the working directory except for .git, .github, and other essentials.
-          # This prepares for a clean copy of the _site contents.
-          # IMPORTANT: List any files or directories at the root level that are NOT part of the
-          # Jekyll _site output but MUST be preserved on the gh-pages branch.
-          # For example, if you have CNAME, README.md, consolidated_conference_updater.py, requirements.txt,
-          # Gemfile, Gemfile.lock, _config.yml, generate_html.py, generate_conference_pages.py, index_template.html, _data/ etc. at the root, they should be preserved.
-          # The current script assumes that everything not in _site should be replaced.
-          # A better approach is to specify what to keep.
-          
           # Create a temporary directory for the new site
           mkdir ../_site_temp
           cp -R _site/* ../_site_temp/
           
-          # Clean current directory - BE CAREFUL WITH THIS COMMAND
-          # This will remove everything except .git and .github (and files specified in the find command)
-          # Add any other files/dirs you need to preserve in the -not -path arguments
-          git ls-files | grep -vE '^(\.git|\.github)' | xargs -r rm -f
-          find . -maxdepth 1 -type d -not -name '.' -not -name '.git' -not -name '.github' -not -name '_data' -exec rm -rf {} +
-          find . -maxdepth 1 -type f -not -name 'README.md' -not -name 'CNAME' -not -name 'Gemfile' -not -name 'Gemfile.lock' -not -name 'consolidated_conference_updater.py' -not -name 'requirements.txt' -not -name '_config.yml' -not -name 'generate_html.py' -not -name 'generate_conference_pages.py' -not -name 'index_template.html' -exec rm -f {} +
-
-
+          # List of files and directories to preserve
+          # These are essential for the project to function
+          PRESERVE_FILES=(
+            "README.md"
+            "CNAME"
+            "Gemfile"
+            "Gemfile.lock"
+            "consolidated_conference_updater.py"
+            "requirements.txt"
+            "_config.yml"
+            "generate_html.py"
+            "generate_conference_pages.py"
+            "index_template.html"
+            "UPDATES.md"
+            "ai-deadlines.ics"
+            "feed.xml"
+          )
+          
+          PRESERVE_DIRS=(
+            "_data"
+            "conference"
+            "calendar"
+            "static"
+            "assets"
+            "utils"
+          )
+          
+          # Create backup of files to preserve
+          mkdir ../backup
+          for file in "${PRESERVE_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              cp "$file" "../backup/"
+            fi
+          done
+          
+          # Create backup of directories to preserve
+          for dir in "${PRESERVE_DIRS[@]}"; do
+            if [ -d "$dir" ]; then
+              cp -R "$dir" "../backup/"
+            fi
+          done
+          
+          # Remove all files and directories except .git and .github
+          find . -maxdepth 1 -mindepth 1 -not -name '.git' -not -name '.github' -exec rm -rf {} +
+          
+          # Restore preserved files
+          for file in "${PRESERVE_FILES[@]}"; do
+            if [ -f "../backup/$file" ]; then
+              cp "../backup/$file" .
+            fi
+          done
+          
+          # Restore preserved directories
+          for dir in "${PRESERVE_DIRS[@]}"; do
+            if [ -d "../backup/$dir" ]; then
+              cp -R "../backup/$dir" .
+            fi
+          done
+          
           # Copy the new site from the temporary directory
           cp -R ../_site_temp/* .
-          rm -rf ../_site_temp
+          rm -rf ../_site_temp ../backup
 
           # Add all changes (new files, deleted files)
           git add -A

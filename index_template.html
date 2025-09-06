@@ -105,7 +105,7 @@
         <div id="confs">
             <div id="coming_confs">
                 
-
+{{CONFERENCES}}
                 
             </div>
             <div id="past_confs">
@@ -269,31 +269,11 @@
 
             addUtcTimeZones();
 
-            
-        // Process test1
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-12-01 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#test1').attr("diff", diff);
-          $('#test1 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#test1 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#test1 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#test1').addClass('past');
-            $('#test1 .timer').replaceWith($('#test1 .deadline'));
-            $('#test1 .timer-small').replaceWith($('#test1 .deadline'));
-            $('#test1 .calendar').remove();
-          }
-        }
+            // Conference data and processing will be added here by the generation script
         });
     </script>
 </body>
 </html>
+
+
+

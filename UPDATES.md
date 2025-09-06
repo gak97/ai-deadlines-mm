@@ -82,6 +82,8 @@ The Jekyll build process:
 - **Preserved Files**: The workflow now preserves `_config.yml`, `generate_html.py`, `generate_conference_pages.py`, `index_template.html`, and other development files
 - **Prevents Deletion**: Fixed the issue where important files were being automatically deleted after workflow execution
 - **Recovery**: Recreated missing `Gemfile` after it was accidentally deleted by the previous workflow run
+- **CRITICAL FIX**: Completely rewrote the deployment script to use a backup/restore approach instead of the problematic `git ls-files` command that was deleting all files including `_data/conferences.yml`
+- **Preserved Directories**: Now properly preserves `_data/`, `conference/`, `calendar/`, `static/`, `assets/`, and `utils/` directories
 
 ### 8. Conference Detail Pages
 
