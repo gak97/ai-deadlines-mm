@@ -246,6 +246,36 @@ function createCalendarFromObject(data) {
         var local_timezone = london_timezone;
         $('.local-timezone').text(london_timezone);
 
+        // Helper to safely set details if anything failed earlier
+        function ensureDetails(d) {
+          if (!d) return;
+          if ($('#conf-date').text().trim() === '' && d.date) {
+            $('#conf-date').text(d.date);
+          }
+          if ($('#conf-place').text().trim() === '' && d.place && d.placeHref) {
+            $('#conf-place').text(d.place);
+            $('#conf-place').attr('href', d.placeHref);
+            $('#conf-place').removeAttr('nohref');
+          }
+          if ($('#conf-website').text().trim() === '' && d.website) {
+            $('#conf-website').text(d.website);
+            $('#conf-website').attr('href', d.website);
+            $('#conf-website').removeAttr('nohref');
+          }
+          // deadline/calendar fallback
+          if ($('#conference-deadline').children().length === 0 && d.deadline && d.tz) {
+            try {
+              var dl = moment.tz(d.deadline, d.tz);
+              var cal = createCalendarFromObject({ id: d.id || 'conf', title: d.title || 'Conference deadline', date: dl.toDate(), duration: 60 });
+              document.querySelector('#conference-deadline').appendChild(cal);
+              $('#conf-timer').countdown(dl.toDate(), function(event) { $(this).html(event.strftime('%D days %Hh %Mm %Ss')); });
+              $('.deadline-time').html(dl.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+              var localDl = moment.tz(dl, london_timezone);
+              $('.deadline-local-time').html(localDl.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+            } catch (e) { /* noop */ }
+          }
+        }
+
         
 
             if (conf == "icra25") {
@@ -3574,6 +3604,45 @@ function createCalendarFromObject(data) {
                 $('#conf-deadline-timer').hide();
               }
             }
+
+            // Final sanity pass: ensure details exist for selected conf
+            var ensureMap = {
+              'iclr26': {
+                id: 'iclr26',
+                title: 'ICLR 2026 deadline',
+                date: 'May 01-05, 2026',
+                place: 'Brazil',
+                placeHref: 'https://maps.google.com/?q=Brazil',
+                website: 'https://iclr.cc/Conferences/2026',
+                deadline: '2025-09-25 20:59:59',
+                tz: 'UTC-8'
+              },
+              'eacl26': {
+                id: 'eacl26', title: 'EACL 2026 deadline',
+                date: 'March 24-29, 2026',
+                place: 'Rabat, Morocco',
+                placeHref: 'https://maps.google.com/?q=Rabat, Morocco',
+                website: 'https://2026.eacl.org/',
+                deadline: '2025-10-06 23:59:59', tz: 'UTC-12'
+              },
+              'lrec26': {
+                id: 'lrec26', title: 'LREC 2026 deadline',
+                date: 'May 11-16, 2026',
+                place: 'Palma, Mallorca, Spain',
+                placeHref: 'https://maps.google.com/?q=Palma, Mallorca, Spain',
+                website: 'https://lrec2026.info/',
+                deadline: '2025-10-17 23:59:59', tz: 'UTC-12'
+              },
+              'icwsm26': {
+                id: 'icwsm26', title: 'ICWSM 2026 deadline',
+                date: 'May 27-29, 2026',
+                place: 'Los Angeles, CA, USA',
+                placeHref: 'https://maps.google.com/?q=Los Angeles, CA, USA',
+                website: 'https://www.icwsm.org/2026/index.html',
+                deadline: '2025-09-15 23:59:59', tz: 'UTC-12'
+              }
+            };
+            ensureDetails(ensureMap[conf]);
 
             if (conf == "aamas26") {
               $('#conf-title-href').text("AAMAS 2026");
