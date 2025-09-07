@@ -3309,9 +3309,12 @@ $("#subject-select").multiselect({
 
         addUtcTimeZones();
 
+        // Force display in London timezone across the main page
+        var display_timezone = 'Europe/London';
+
         try {
-          var local_timezone =
-Intl.DateTimeFormat().resolvedOptions().timeZone;
+          // Keep label consistent if any element references local timezone text
+          var local_timezone = display_timezone;
           $('.local-timezone').text(local_timezone.toString());
         }
         catch(err) {
@@ -3326,7 +3329,7 @@ Intl.DateTimeFormat().resolvedOptions().timeZone;
           var diff = deadline.diff(now, 'seconds');
           
           $('#icra25').attr("diff", diff);
-          $('#icra25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+          $('#icra25 .deadline-time').text(moment.tz(deadline, display_timezone).format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
           
           if (diff > 0) {
             $('#icra25 .timer').countdown(deadline.toDate(), function(event) {
@@ -4763,6 +4766,32 @@ update_filtering({ subs: subs, all_subs: all_subs });
             $('#icwsm26 .calendar').remove();
           }
         }
+
+        // Convert displayed deadlines to Europe/London timezone and fix abstract/full labels
+        try {
+          $('.ConfItem .deadline-time').each(function() {
+            var txt = $(this).text().trim();
+            if (!txt) return;
+            var m = moment(txt, 'ddd MMM DD YYYY HH:mm:ss [GMT]Z', true);
+            if (!m.isValid()) {
+              // Fallback: parse with timezone offset preserved
+              m = moment.parseZone(txt);
+            }
+            if (m.isValid()) {
+              $(this).text(m.tz(display_timezone).format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+            }
+          });
+
+          // Where a separate abstract date exists, relabel the second line as full-paper deadline
+          $('.ConfItem').each(function() {
+            var $note = $(this).find('.note');
+            var $abs = $(this).find('.abstract-deadline');
+            var $dtime = $(this).find('.deadline .deadline-time');
+            if ($note.length && $abs.length && $dtime.length) {
+              $abs.text('Full paper deadline: ' + $dtime.text());
+            }
+          });
+        } catch (e) { console.log('Post-processing error', e); }
 
         // Event handler on sub badge click
         $('.conf-sub').click(function (e) {
