@@ -203,12 +203,6 @@ class ConferenceDiscoveryEngine:
                 candidates += self._parse_wikicfp_results(soup, category)
                 # Be respectful of the website
                 time.sleep(1)
-     
-                    continue
-                soup = BeautifulSoup(response.text, "html.parser")
-                candidates += self._parse_wikicfp_results(soup, category)
-                # Be respectful of the website
-                time.sleep(1)
         return candidates
 
     def _parse_wikicfp_results(self, soup: BeautifulSoup, category: str) -> List[ConferenceCandidate]:
