@@ -14,14 +14,16 @@ GitHub repository secrets.  If no key is provided the script will
 skip the AI enhancement step and simply return scraped candidates.
 
 The script writes new conference entries back into
-``src/data/conferences.yml`` (falling back to ``_data/conferences.yml`` if
-the ``src/data`` tree does not exist).  New conferences are appended
-and the list is sorted by deadline.
+``_data/conferences.yml`` (reading from ``src/data/conferences.yml`` if the
+legacy location is still in use).  New conferences are appended and the list is
+sorted by deadline before the HTML pages are regenerated.
 
 Usage:
 
     pip install -r .github/scripts/requirements.txt
     export GEMINI_API_KEY=...  # optional, enables AI enhancement
+    export GOOGLE_SEARCH_API_KEY=...  # optional, enables Google enrichment
+    export GOOGLE_CSE_ID=...  # optional, Google Custom Search engine ID
     python .github/scripts/ai_conference_discovery.py
 
 """
@@ -30,12 +32,13 @@ import os
 import json
 import yaml
 import time
+import re
+import subprocess
 import requests
 from datetime import datetime
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any
 from urllib.parse import urljoin
-import re
 
 from bs4 import BeautifulSoup
 
@@ -80,6 +83,7 @@ class ConferenceCandidate:
     title: str
     full_name: str = ""
     url: str = ""
+    official_url: str = ""
     deadline: str = ""
     abstract_deadline: str = ""
     conference_date: str = ""
@@ -88,6 +92,7 @@ class ConferenceCandidate:
     country: str = ""
     description: str = ""
     tags: List[str] = field(default_factory=list)
+    search_results: List[Dict[str, str]] = field(default_factory=list)
     year: int = 0
     confidence_score: float = 0.0
     source: str = ""
@@ -102,6 +107,8 @@ class ConferenceDiscoveryEngine:
         # repository secrets for production use.  When no key is available the
         # AI step will be skipped.
         self.gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY")
+        self.google_api_key = os.getenv("GOOGLE_SEARCH_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        self.google_cse_id = os.getenv("GOOGLE_CSE_ID") or os.getenv("GOOGLE_SEARCH_ENGINE_ID")
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
@@ -134,17 +141,16 @@ class ConferenceDiscoveryEngine:
         if not candidates:
             return 0
 
-        # Determine which data file to read/write.  The main site uses
-        # ``_data/conferences.yml``, but the Hugging Face scripts expect
-        # ``src/data/conferences.yml``.  We support both.
+        # Determine which data file to read; always write to ``_data`` so the
+        # static site picks up the latest data.
         primary_path = os.path.join("src", "data", "conferences.yml")
-        fallback_path = os.path.join("_data", "conferences.yml")
+        data_path = os.path.join("_data", "conferences.yml")
 
-        data_path = primary_path if os.path.exists(primary_path) else fallback_path
+        source_path = data_path if os.path.exists(data_path) else primary_path
 
         existing: List[Dict[str, Any]] = []
-        if os.path.exists(data_path):
-            with open(data_path, "r") as f:
+        if os.path.exists(source_path):
+            with open(source_path, "r") as f:
                 existing = yaml.safe_load(f) or []
 
         added_count = 0
@@ -158,10 +164,11 @@ class ConferenceDiscoveryEngine:
                 "year": cand.year or datetime.now().year + 1,
                 "id": self._generate_conference_id(cand.title, cand.year or datetime.now().year + 1),
                 "full_name": cand.full_name or cand.title,
-                "link": cand.url,
+                "link": cand.official_url or cand.url,
                 "deadline": self._parse_deadline(cand.deadline),
                 "timezone": "AoE",  # Default to anywhere on Earth time
                 "date": cand.conference_date,
+                "location": cand.location or ", ".join([part for part in [cand.city, cand.country] if part]),
                 "tags": cand.tags,
                 "city": cand.city,
                 "country": cand.country,
@@ -183,6 +190,9 @@ class ConferenceDiscoveryEngine:
         os.makedirs(os.path.dirname(data_path), exist_ok=True)
         with open(data_path, "w") as f:
             yaml.dump(existing, f, default_flow_style=False, sort_keys=False)
+
+        # Trigger HTML regeneration to surface the updates on the site
+        self._generate_site_pages()
 
         return added_count
 
@@ -229,6 +239,7 @@ class ConferenceDiscoveryEngine:
             )
             # Attempt to extract more details from the individual conference page
             self._enhance_from_wikicfp_page(candidate)
+            self._enrich_from_google_search(candidate)
             results.append(candidate)
         return results
 
@@ -288,20 +299,38 @@ class ConferenceDiscoveryEngine:
         enhanced: List[ConferenceCandidate] = []
         for cand in candidates:
             # Prepare a prompt describing the conference and requesting structured data
+            search_evidence = "\n".join(
+                [
+                    f"- {res.get('title', '')} ({res.get('link', '')}): {res.get('snippet', '')}"
+                    for res in cand.search_results[:5]
+                ]
+            )
+            search_block = f"Google search results:\n{search_evidence}\n\n" if search_evidence else ""
             prompt = (
                 f"Analyze this conference information and respond in JSON:\n"
                 f"Title: {cand.title}\n"
                 f"Description: {cand.description}\n"
                 f"Location: {cand.location}\n"
-                f"Current Tags: {cand.tags}\n\n"
+                f"Current Tags: {cand.tags}\n"
+                f"WikiCFP Page: {cand.url}\n"
+                f"Candidate official website: {cand.official_url}\n"
+                f"Known deadlines: submission={cand.deadline}, abstract={cand.abstract_deadline}\n"
+                f"Known conference dates: {cand.conference_date}\n\n"
+                f"{search_block}"
                 "Provide a JSON object with the following keys:\n"
-                "categories: a list of the most appropriate categories from: "
+                "categories: list of the most appropriate categories from "
                 f"{list(TARGET_CATEGORIES.keys())};\n"
-                "confidence_score: a number between 0 and 1 representing confidence that this is a legitimate AI conference;\n"
-                "full_name: the full expanded conference name;\n"
-                "city: the city where the conference takes place;\n"
-                "country: the country where the conference takes place;\n"
-                "year: the year of the conference (integer)."
+                "confidence_score: number between 0 and 1 for legitimacy;\n"
+                "full_name: full expanded conference name;\n"
+                "official_url: verified official conference website;\n"
+                "submission_deadline: primary submission deadline (string);\n"
+                "abstract_deadline: abstract deadline if available (string);\n"
+                "conference_dates: full event dates (string);\n"
+                "location: venue or city+country (string);\n"
+                "city: city of the event;\n"
+                "country: country of the event;\n"
+                "year: integer year of the event;\n"
+                "notes: additional context if important."
             )
             try:
                 response = model.generate_content(prompt)
@@ -313,6 +342,11 @@ class ConferenceDiscoveryEngine:
                 cand.tags = data.get("categories", cand.tags)
                 cand.confidence_score = float(data.get("confidence_score", 0.5))
                 cand.full_name = data.get("full_name", cand.title)
+                cand.official_url = data.get("official_url", cand.official_url or cand.url)
+                cand.deadline = data.get("submission_deadline", data.get("deadline", cand.deadline))
+                cand.abstract_deadline = data.get("abstract_deadline", cand.abstract_deadline)
+                cand.conference_date = data.get("conference_dates", cand.conference_date)
+                cand.location = data.get("location", cand.location)
                 cand.city = data.get("city", cand.city)
                 cand.country = data.get("country", cand.country)
                 cand.year = int(data.get("year", cand.year or datetime.now().year + 1))
@@ -363,10 +397,10 @@ class ConferenceDiscoveryEngine:
     # -------------------------------------------------------------------------
     # Utility functions
     # -------------------------------------------------------------------------
-    def _safe_request(self, url: str, timeout: int = 10) -> Optional[requests.Response]:
+    def _safe_request(self, url: str, timeout: int = 10, params: Optional[Dict[str, Any]] = None) -> Optional[requests.Response]:
         """Perform an HTTP GET request with error handling."""
         try:
-            response = self.session.get(url, timeout=timeout)
+            response = self.session.get(url, timeout=timeout, params=params)
             response.raise_for_status()
             return response
         except Exception as exc:
@@ -402,6 +436,166 @@ class ConferenceDiscoveryEngine:
                 continue
         # Fallback: return the string as is
         return deadline_str
+
+    # -------------------------------------------------------------------------
+    # Google Search enrichment
+    # -------------------------------------------------------------------------
+    def _enrich_from_google_search(self, candidate: ConferenceCandidate) -> None:
+        """Use Google Custom Search to locate the official site and extra context."""
+        if not self.google_api_key or not self.google_cse_id:
+            return
+
+        query_parts = [candidate.title]
+        if candidate.year:
+            query_parts.append(str(candidate.year))
+        query_parts.append("conference")
+        query = " ".join(query_parts)
+
+        params = {
+            "key": self.google_api_key,
+            "cx": self.google_cse_id,
+            "q": query,
+            "num": 5,
+        }
+        response = self._safe_request("https://www.googleapis.com/customsearch/v1", params=params)
+        if not response:
+            return
+
+        try:
+            data = response.json()
+        except ValueError:
+            return
+
+        items = data.get("items", []) or []
+        search_results: List[Dict[str, str]] = []
+        for item in items:
+            link = item.get("link", "")
+            title = item.get("title", "")
+            snippet = item.get("snippet", "")
+            pagemap = item.get("pagemap", {}) or {}
+            search_results.append({
+                "title": title,
+                "link": link,
+                "snippet": snippet,
+            })
+
+            # Prefer the first non-WikiCFP and non-aggregator link as the official URL
+            if (
+                not candidate.official_url
+                and link
+                and not any(bad in link.lower() for bad in ["wikicfp", "easychair", "openreview", "confsearch", "paperswithcode"])
+            ):
+                candidate.official_url = link
+
+            # Attempt to glean dates and locations from structured data or snippets
+            if not candidate.conference_date:
+                candidate.conference_date = (
+                    self._extract_dates_from_pagemap(pagemap)
+                    or self._extract_dates_from_text(snippet)
+                    or candidate.conference_date
+                )
+            if not candidate.location:
+                candidate.location = (
+                    self._extract_location_from_pagemap(pagemap)
+                    or self._extract_location_from_text(snippet)
+                    or candidate.location
+                )
+
+        candidate.search_results = search_results
+        # Rate limit to avoid hitting Google API quotas too quickly
+        time.sleep(1)
+
+    def _extract_dates_from_pagemap(self, pagemap: Dict[str, Any]) -> str:
+        """Extract event dates from the Custom Search pagemap section."""
+        if not pagemap:
+            return ""
+        for key in ("event", "hcalendar", "dataset", "metatags"):
+            entries = pagemap.get(key) or []
+            if isinstance(entries, dict):
+                entries = [entries]
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                for date_key in ("startDate", "endDate", "startdate", "enddate", "eventdate", "dc.date"):
+                    if entry.get(date_key):
+                        start = entry.get("startDate") or entry.get("startdate") or entry.get(date_key)
+                        end = entry.get("endDate") or entry.get("enddate")
+                        if start and end and start != end:
+                            return f"{start} – {end}"
+                        return str(start)
+        return ""
+
+    def _extract_location_from_pagemap(self, pagemap: Dict[str, Any]) -> str:
+        """Attempt to pull a location string from structured pagemap data."""
+        if not pagemap:
+            return ""
+        for key in ("postaladdress", "place", "organization", "event"):
+            entries = pagemap.get(key) or []
+            if isinstance(entries, dict):
+                entries = [entries]
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                locality = entry.get("addresslocality") or entry.get("addressLocality") or entry.get("city")
+                country = entry.get("addresscountry") or entry.get("addressCountry") or entry.get("country")
+                region = entry.get("addressregion") or entry.get("addressRegion") or entry.get("region")
+                name = entry.get("name")
+                pieces = [p for p in [name, locality, region, country] if p]
+                if pieces:
+                    return ", ".join(dict.fromkeys(pieces))
+        return ""
+
+    def _extract_dates_from_text(self, text: str) -> str:
+        """Search for human-readable date ranges in free text."""
+        if not text:
+            return ""
+        month_names = (
+            "January|February|March|April|May|June|July|August|September|October|November|December"
+        )
+        short_months = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec"
+        patterns = [
+            rf"((?:{month_names})\s+\d{{1,2}}(?:\s*[–-]\s*\d{{1,2}})?,?\s+20\d{{2}})",
+            rf"((?:{short_months})\.?\s+\d{{1,2}}(?:\s*[–-]\s*\d{{1,2}})?,?\s+20\d{{2}})",
+            rf"(20\d{{2}}\s*(?:{month_names})\s*\d{{1,2}}(?:\s*[–-]\s*\d{{1,2}})?)",
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, text)
+            if match:
+                return match.group(1)
+        return ""
+
+    def _extract_location_from_text(self, text: str) -> str:
+        """Find likely location strings from snippets (e.g., "Paris, France")."""
+        if not text:
+            return ""
+        location_pattern = re.compile(r"([A-Z][A-Za-z\-']+(?:\s+[A-Z][A-Za-z\-']+)*,\s*[A-Z][A-Za-z\-']+(?:\s+[A-Z][A-Za-z\-']+)*)")
+        match = location_pattern.search(text)
+        if match:
+            return match.group(1)
+        return ""
+
+    # -------------------------------------------------------------------------
+    # Site generation
+    # -------------------------------------------------------------------------
+    def _generate_site_pages(self) -> None:
+        """Run the HTML generation step so new data appears on the site."""
+        generator_script = os.path.join(os.getcwd(), "generate_conference_pages.py")
+        if not os.path.exists(generator_script):
+            print("⚠️  generate_conference_pages.py not found; skipping HTML generation")
+            return
+        try:
+            result = subprocess.run(
+                ["python", "generate_conference_pages.py"],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            if result.stdout:
+                print(result.stdout.strip())
+            if result.stderr:
+                print(result.stderr.strip())
+        except subprocess.CalledProcessError as exc:
+            print(f"⚠️  Failed to generate conference pages: {exc}")
 
 
 if __name__ == "__main__":
