@@ -3312,6 +3312,58 @@ $("#subject-select").multiselect({
         // Force display in London timezone across the main page
         var display_timezone = 'Europe/London';
 
+        function markDeadlineAsTBD(confSelector) {
+          var $conf = $(confSelector);
+          $conf.removeAttr('diff');
+          $conf.find('.deadline-time').text('TBD');
+          $conf.find('.timer').each(function() {
+            $(this).text('TBD');
+          });
+          $conf.find('.timer-small').each(function() {
+            $(this).text('TBD');
+          });
+        }
+
+        function setupConferenceCountdown(confSelector, deadlineString, timezone) {
+          if (typeof moment === 'undefined') {
+            return;
+          }
+
+          if (!deadlineString || deadlineString.trim() === '' || deadlineString.trim().toUpperCase() === 'TBD') {
+            markDeadlineAsTBD(confSelector);
+            return;
+          }
+
+          var deadline = moment.tz(deadlineString, timezone);
+          if (!deadline.isValid()) {
+            markDeadlineAsTBD(confSelector);
+            return;
+          }
+
+          var now = moment();
+          var diff = deadline.diff(now, 'seconds');
+          var $conf = $(confSelector);
+
+          $conf.attr('diff', diff);
+          $conf.find('.deadline-time').text(deadline.clone().tz(display_timezone).format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+
+          if (diff > 0) {
+            var deadlineDate = deadline.toDate();
+            $conf.find('.timer').countdown(deadlineDate, function(event) {
+              $(this).html(event.strftime('%D days %H:%M:%S'));
+            });
+            $conf.find('.timer-small').countdown(deadlineDate, function(event) {
+              $(this).html(event.strftime('%D days %H:%M:%S'));
+            });
+          } else {
+            $conf.addClass('past');
+            $conf.appendTo($('#past_confs'));
+            $(confSelector + ' .timer').replaceWith($(confSelector + ' .deadline'));
+            $(confSelector + ' .timer-small').replaceWith($(confSelector + ' .deadline'));
+            $conf.find('.calendar').remove();
+          }
+        }
+
         try {
           // Keep label consistent if any element references local timezone text
           var local_timezone = display_timezone;
@@ -3323,1330 +3375,164 @@ $("#subject-select").multiselect({
 
         
         // Process icra25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-07-15 12:00:00', 'UTC-4');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#icra25').attr("diff", diff);
-          $('#icra25 .deadline-time').text(moment.tz(deadline, display_timezone).format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#icra25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icra25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icra25').addClass('past');
-            $('#icra25').appendTo($("#past_confs"));
-            $('#icra25 .timer').replaceWith($('#icra25 .deadline'));
-            $('#icra25 .timer-small').replaceWith($('#icra25 .deadline'));
-            $('#icra25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#icra25', '2024-07-15 12:00:00', 'UTC-4');
 
         // Process wacv25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-07-15 23:59:59', 'UTC-7');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#wacv25').attr("diff", diff);
-          $('#wacv25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#wacv25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#wacv25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#wacv25').addClass('past');
-            $('#wacv25').appendTo($("#past_confs"));
-            $('#wacv25 .timer').replaceWith($('#wacv25 .deadline'));
-            $('#wacv25 .timer-small').replaceWith($('#wacv25 .deadline'));
-            $('#wacv25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#wacv25', '2024-07-15 23:59:59', 'UTC-7');
 
         // Process aaai25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-08-15 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#aaai25').attr("diff", diff);
-          $('#aaai25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#aaai25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#aaai25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#aaai25').addClass('past');
-            $('#aaai25').appendTo($("#past_confs"));
-            $('#aaai25 .timer').replaceWith($('#aaai25 .deadline'));
-            $('#aaai25 .timer-small').replaceWith($('#aaai25 .deadline'));
-            $('#aaai25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#aaai25', '2024-08-15 23:59:59', 'UTC-12');
 
         // Process coling25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-09-16 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#coling25').attr("diff", diff);
-          $('#coling25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#coling25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#coling25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#coling25').addClass('past');
-            $('#coling25').appendTo($("#past_confs"));
-            $('#coling25 .timer').replaceWith($('#coling25 .deadline'));
-            $('#coling25 .timer-small').replaceWith($('#coling25 .deadline'));
-            $('#coling25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#coling25', '2024-09-16 23:59:59', 'UTC-12');
 
         // Process fgr25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-09-30 23:59:59', 'UTC-8');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#fgr25').attr("diff", diff);
-          $('#fgr25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#fgr25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#fgr25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#fgr25').addClass('past');
-            $('#fgr25').appendTo($("#past_confs"));
-            $('#fgr25 .timer').replaceWith($('#fgr25 .deadline'));
-            $('#fgr25 .timer-small').replaceWith($('#fgr25 .deadline'));
-            $('#fgr25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#fgr25', '2024-09-30 23:59:59', 'UTC-8');
 
         // Process alt2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-10-01 09:59:59', 'UTC+0');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#alt2025').attr("diff", diff);
-          $('#alt2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#alt2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#alt2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#alt2025').addClass('past');
-            $('#alt2025').appendTo($("#past_confs"));
-            $('#alt2025 .timer').replaceWith($('#alt2025 .deadline'));
-            $('#alt2025 .timer-small').replaceWith($('#alt2025 .deadline'));
-            $('#alt2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#alt2025', '2024-10-01 09:59:59', 'UTC+0');
 
         // Process iclr25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-10-01 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#iclr25').attr("diff", diff);
-          $('#iclr25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#iclr25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#iclr25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#iclr25').addClass('past');
-            $('#iclr25').appendTo($("#past_confs"));
-            $('#iclr25 .timer').replaceWith($('#iclr25 .deadline'));
-            $('#iclr25 .timer-small').replaceWith($('#iclr25 .deadline'));
-            $('#iclr25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#iclr25', '2024-10-01 23:59:59', 'UTC-12');
 
         // Process aistats25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-10-10 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#aistats25').attr("diff", diff);
-          $('#aistats25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#aistats25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#aistats25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#aistats25').addClass('past');
-            $('#aistats25').appendTo($("#past_confs"));
-            $('#aistats25 .timer').replaceWith($('#aistats25 .deadline'));
-            $('#aistats25 .timer-small').replaceWith($('#aistats25 .deadline'));
-            $('#aistats25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#aistats25', '2024-10-10 23:59:59', 'UTC-12');
 
         // Process naacl25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-10-15 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#naacl25').attr("diff", diff);
-          $('#naacl25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#naacl25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#naacl25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#naacl25').addClass('past');
-            $('#naacl25').appendTo($("#past_confs"));
-            $('#naacl25 .timer').replaceWith($('#naacl25 .deadline'));
-            $('#naacl25 .timer-small').replaceWith($('#naacl25 .deadline'));
-            $('#naacl25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#naacl25', '2024-10-15 23:59:59', 'UTC-12');
 
         // Process aamas25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-10-16 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#aamas25').attr("diff", diff);
-          $('#aamas25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#aamas25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#aamas25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#aamas25').addClass('past');
-            $('#aamas25').appendTo($("#past_confs"));
-            $('#aamas25 .timer').replaceWith($('#aamas25 .deadline'));
-            $('#aamas25 .timer-small').replaceWith($('#aamas25 .deadline'));
-            $('#aamas25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#aamas25', '2024-10-16 23:59:59', 'UTC-12');
 
         // Process icaps25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-11-01 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#icaps25').attr("diff", diff);
-          $('#icaps25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#icaps25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icaps25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icaps25').addClass('past');
-            $('#icaps25').appendTo($("#past_confs"));
-            $('#icaps25 .timer').replaceWith($('#icaps25 .deadline'));
-            $('#icaps25 .timer-small').replaceWith($('#icaps25 .deadline'));
-            $('#icaps25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#icaps25', '2024-11-01 23:59:59', 'UTC-12');
 
         // Process cvpr25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-11-14 23:59:00', 'UTC-8');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#cvpr25').attr("diff", diff);
-          $('#cvpr25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#cvpr25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#cvpr25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#cvpr25').addClass('past');
-            $('#cvpr25').appendTo($("#past_confs"));
-            $('#cvpr25 .timer').replaceWith($('#cvpr25 .deadline'));
-            $('#cvpr25 .timer-small').replaceWith($('#cvpr25 .deadline'));
-            $('#cvpr25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#cvpr25', '2024-11-14 23:59:00', 'UTC-8');
 
         // Process esann25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-11-20 00:00:00', 'UTC-8');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#esann25').attr("diff", diff);
-          $('#esann25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#esann25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#esann25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#esann25').addClass('past');
-            $('#esann25').appendTo($("#past_confs"));
-            $('#esann25 .timer').replaceWith($('#esann25 .deadline'));
-            $('#esann25 .timer-small').replaceWith($('#esann25 .deadline'));
-            $('#esann25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#esann25', '2024-11-20 00:00:00', 'UTC-8');
 
         // Process cpal25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2024-11-25 23:59:59', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#cpal25').attr("diff", diff);
-          $('#cpal25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#cpal25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#cpal25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#cpal25').addClass('past');
-            $('#cpal25').appendTo($("#past_confs"));
-            $('#cpal25 .timer').replaceWith($('#cpal25 .deadline'));
-            $('#cpal25 .timer-small').replaceWith($('#cpal25 .deadline'));
-            $('#cpal25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#cpal25', '2024-11-25 23:59:59', 'AoE');
 
         // Process cec2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-01-15 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#cec2025').attr("diff", diff);
-          $('#cec2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#cec2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#cec2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#cec2025').addClass('past');
-            $('#cec2025').appendTo($("#past_confs"));
-            $('#cec2025 .timer').replaceWith($('#cec2025 .deadline'));
-            $('#cec2025 .timer-small').replaceWith($('#cec2025 .deadline'));
-            $('#cec2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#cec2025', '2025-01-15 23:59:59', 'UTC-12');
 
         // Process ijcai25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-01-23 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#ijcai25').attr("diff", diff);
-          $('#ijcai25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#ijcai25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#ijcai25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#ijcai25').addClass('past');
-            $('#ijcai25').appendTo($("#past_confs"));
-            $('#ijcai25 .timer').replaceWith($('#ijcai25 .deadline'));
-            $('#ijcai25 .timer-small').replaceWith($('#ijcai25 .deadline'));
-            $('#ijcai25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#ijcai25', '2025-01-23 23:59:59', 'UTC-12');
 
         // Process rss25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-01-24 23:59:00', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#rss25').attr("diff", diff);
-          $('#rss25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#rss25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#rss25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#rss25').addClass('past');
-            $('#rss25').appendTo($("#past_confs"));
-            $('#rss25 .timer').replaceWith($('#rss25 .deadline'));
-            $('#rss25 .timer-small').replaceWith($('#rss25 .deadline'));
-            $('#rss25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#rss25', '2025-01-24 23:59:00', 'AoE');
 
         // Process gecco25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-01-29 23:59:00', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#gecco25').attr("diff", diff);
-          $('#gecco25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#gecco25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#gecco25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#gecco25').addClass('past');
-            $('#gecco25').appendTo($("#past_confs"));
-            $('#gecco25 .timer').replaceWith($('#gecco25 .deadline'));
-            $('#gecco25 .timer-small').replaceWith($('#gecco25 .deadline'));
-            $('#gecco25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#gecco25', '2025-01-29 23:59:00', 'AoE');
 
         // Process icml25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-01-30 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#icml25').attr("diff", diff);
-          $('#icml25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#icml25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icml25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icml25').addClass('past');
-            $('#icml25').appendTo($("#past_confs"));
-            $('#icml25 .timer').replaceWith($('#icml25 .deadline'));
-            $('#icml25 .timer-small').replaceWith($('#icml25 .deadline'));
-            $('#icml25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#icml25', '2025-01-30 23:59:59', 'UTC-12');
 
         // Process ijcnn2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-02-05 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#ijcnn2025').attr("diff", diff);
-          $('#ijcnn2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#ijcnn2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#ijcnn2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#ijcnn2025').addClass('past');
-            $('#ijcnn2025').appendTo($("#past_confs"));
-            $('#ijcnn2025 .timer').replaceWith($('#ijcnn2025 .deadline'));
-            $('#ijcnn2025 .timer-small').replaceWith($('#ijcnn2025 .deadline'));
-            $('#ijcnn2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#ijcnn2025', '2025-02-05 23:59:59', 'UTC-12');
 
         // Process colt25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-02-06 16:59:59', 'UTC-5');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#colt25').attr("diff", diff);
-          $('#colt25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#colt25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#colt25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#colt25').addClass('past');
-            $('#colt25').appendTo($("#past_confs"));
-            $('#colt25 .timer').replaceWith($('#colt25 .deadline'));
-            $('#colt25 .timer-small').replaceWith($('#colt25 .deadline'));
-            $('#colt25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#colt25', '2025-02-06 16:59:59', 'UTC-5');
 
         // Process uai25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-02-10 23:59:59', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#uai25').attr("diff", diff);
-          $('#uai25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#uai25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#uai25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#uai25').addClass('past');
-            $('#uai25').appendTo($("#past_confs"));
-            $('#uai25 .timer').replaceWith($('#uai25 .deadline'));
-            $('#uai25 .timer-small').replaceWith($('#uai25 .deadline'));
-            $('#uai25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#uai25', '2025-02-10 23:59:59', 'AoE');
 
         // Process acl25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-02-15 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#acl25').attr("diff", diff);
-          $('#acl25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#acl25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#acl25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#acl25').addClass('past');
-            $('#acl25').appendTo($("#past_confs"));
-            $('#acl25 .timer').replaceWith($('#acl25 .deadline'));
-            $('#acl25 .timer-small').replaceWith($('#acl25 .deadline'));
-            $('#acl25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#acl25', '2025-02-15 23:59:59', 'UTC-12');
 
         // Process iros25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-03-01 23:59:59', 'UTC-8');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#iros25').attr("diff", diff);
-          $('#iros25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#iros25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#iros25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#iros25').addClass('past');
-            $('#iros25').appendTo($("#past_confs"));
-            $('#iros25 .timer').replaceWith($('#iros25 .deadline'));
-            $('#iros25 .timer-small').replaceWith($('#iros25 .deadline'));
-            $('#iros25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#iros25', '2025-03-01 23:59:59', 'UTC-8');
 
         // Process icdar2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-03-07 23:59:59', 'UTC+0');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#icdar2025').attr("diff", diff);
-          $('#icdar2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#icdar2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icdar2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icdar2025').addClass('past');
-            $('#icdar2025').appendTo($("#past_confs"));
-            $('#icdar2025 .timer').replaceWith($('#icdar2025 .deadline'));
-            $('#icdar2025 .timer-small').replaceWith($('#icdar2025 .deadline'));
-            $('#icdar2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#icdar2025', '2025-03-07 23:59:59', 'UTC+0');
 
         // Process iccv25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-03-08 09:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#iccv25').attr("diff", diff);
-          $('#iccv25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#iccv25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#iccv25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#iccv25').addClass('past');
-            $('#iccv25').appendTo($("#past_confs"));
-            $('#iccv25 .timer').replaceWith($('#iccv25 .deadline'));
-            $('#iccv25 .timer-small').replaceWith($('#iccv25 .deadline'));
-            $('#iccv25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#iccv25', '2025-03-08 09:59:59', 'UTC-12');
 
         // Process conll25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-03-14 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#conll25').attr("diff", diff);
-          $('#conll25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#conll25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#conll25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#conll25').addClass('past');
-            $('#conll25').appendTo($("#past_confs"));
-            $('#conll25 .timer').replaceWith($('#conll25 .deadline'));
-            $('#conll25 .timer-small').replaceWith($('#conll25 .deadline'));
-            $('#conll25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#conll25', '2025-03-14 23:59:59', 'UTC-12');
 
         // Process icwsm25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-03-15 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#icwsm25').attr("diff", diff);
-          $('#icwsm25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#icwsm25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icwsm25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icwsm25').addClass('past');
-            $('#icwsm25').appendTo($("#past_confs"));
-            $('#icwsm25 .timer').replaceWith($('#icwsm25 .deadline'));
-            $('#icwsm25 .timer-small').replaceWith($('#icwsm25 .deadline'));
-            $('#icwsm25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#icwsm25', '2025-03-15 23:59:59', 'UTC-12');
 
         // Process ksem25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-03-20 23:59:59', 'UTC+0');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#ksem25').attr("diff", diff);
-          $('#ksem25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#ksem25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#ksem25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#ksem25').addClass('past');
-            $('#ksem25').appendTo($("#past_confs"));
-            $('#ksem25 .timer').replaceWith($('#ksem25 .deadline'));
-            $('#ksem25 .timer-small').replaceWith($('#ksem25 .deadline'));
-            $('#ksem25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#ksem25', '2025-03-20 23:59:59', 'UTC+0');
 
         // Process colm25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-03-28 23:59:59', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#colm25').attr("diff", diff);
-          $('#colm25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#colm25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#colm25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#colm25').addClass('past');
-            $('#colm25').appendTo($("#past_confs"));
-            $('#colm25 .timer').replaceWith($('#colm25 .deadline'));
-            $('#colm25 .timer-small').replaceWith($('#colm25 .deadline'));
-            $('#colm25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#colm25', '2025-03-28 23:59:59', 'AoE');
 
         // Process icann2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-03-29 23:59:59', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#icann2025').attr("diff", diff);
-          $('#icann2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#icann2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icann2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icann2025').addClass('past');
-            $('#icann2025').appendTo($("#past_confs"));
-            $('#icann2025 .timer').replaceWith($('#icann2025 .deadline'));
-            $('#icann2025 .timer-small').replaceWith($('#icann2025 .deadline'));
-            $('#icann2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#icann2025', '2025-03-29 23:59:59', 'AoE');
 
         // Process ijcb2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-04-11 23:59:59', 'UTC-7');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#ijcb2025').attr("diff", diff);
-          $('#ijcb2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#ijcb2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#ijcb2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#ijcb2025').addClass('past');
-            $('#ijcb2025').appendTo($("#past_confs"));
-            $('#ijcb2025 .timer').replaceWith($('#ijcb2025 .deadline'));
-            $('#ijcb2025 .timer-small').replaceWith($('#ijcb2025 .deadline'));
-            $('#ijcb2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#ijcb2025', '2025-04-11 23:59:59', 'UTC-7');
 
         // Process lrec25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-04-15 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#lrec25').attr("diff", diff);
-          $('#lrec25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#lrec25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#lrec25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#lrec25').addClass('past');
-            $('#lrec25').appendTo($("#past_confs"));
-            $('#lrec25 .timer').replaceWith($('#lrec25 .deadline'));
-            $('#lrec25 .timer-small').replaceWith($('#lrec25 .deadline'));
-            $('#lrec25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#lrec25', '2025-04-15 23:59:59', 'UTC-12');
 
         // Process nlpcc2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-04-20 23:59:59', 'UTC+8');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#nlpcc2025').attr("diff", diff);
-          $('#nlpcc2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#nlpcc2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#nlpcc2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#nlpcc2025').addClass('past');
-            $('#nlpcc2025').appendTo($("#past_confs"));
-            $('#nlpcc2025 .timer').replaceWith($('#nlpcc2025 .deadline'));
-            $('#nlpcc2025 .timer-small').replaceWith($('#nlpcc2025 .deadline'));
-            $('#nlpcc2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#nlpcc2025', '2025-04-20 23:59:59', 'UTC+8');
 
         // Process corl25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-04-30 23:59:59', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#corl25').attr("diff", diff);
-          $('#corl25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#corl25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#corl25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#corl25').addClass('past');
-            $('#corl25').appendTo($("#past_confs"));
-            $('#corl25 .timer').replaceWith($('#corl25 .deadline'));
-            $('#corl25 .timer-small').replaceWith($('#corl25 .deadline'));
-            $('#corl25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#corl25', '2025-04-30 23:59:59', 'AoE');
 
         // Process ecai25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-05-06 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#ecai25').attr("diff", diff);
-          $('#ecai25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#ecai25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#ecai25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#ecai25').addClass('past');
-            $('#ecai25').appendTo($("#past_confs"));
-            $('#ecai25 .timer').replaceWith($('#ecai25 .deadline'));
-            $('#ecai25 .timer-small').replaceWith($('#ecai25 .deadline'));
-            $('#ecai25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#ecai25', '2025-05-06 23:59:59', 'UTC-12');
 
         // Process krd25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-05-12 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#krd25').attr("diff", diff);
-          $('#krd25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#krd25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#krd25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#krd25').addClass('past');
-            $('#krd25').appendTo($("#past_confs"));
-            $('#krd25 .timer').replaceWith($('#krd25 .deadline'));
-            $('#krd25 .timer-small').replaceWith($('#krd25 .deadline'));
-            $('#krd25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#krd25', '2025-05-12 23:59:59', 'UTC-12');
 
         // Process nips25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-05-15 23:59:59', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#nips25').attr("diff", diff);
-          $('#nips25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#nips25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#nips25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#nips25').addClass('past');
-            $('#nips25').appendTo($("#past_confs"));
-            $('#nips25 .timer').replaceWith($('#nips25 .deadline'));
-            $('#nips25 .timer-small').replaceWith($('#nips25 .deadline'));
-            $('#nips25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#nips25', '2025-05-15 23:59:59', 'AoE');
 
         // Process bmvc25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-05-16 23:59:59', 'UTC+0');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#bmvc25').attr("diff", diff);
-          $('#bmvc25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#bmvc25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#bmvc25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#bmvc25').addClass('past');
-            $('#bmvc25').appendTo($("#past_confs"));
-            $('#bmvc25 .timer').replaceWith($('#bmvc25 .deadline'));
-            $('#bmvc25 .timer-small').replaceWith($('#bmvc25 .deadline'));
-            $('#bmvc25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#bmvc25', '2025-05-16 23:59:59', 'UTC+0');
 
         // Process emnlp25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-05-19 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#emnlp25').attr("diff", diff);
-          $('#emnlp25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#emnlp25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#emnlp25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#emnlp25').addClass('past');
-            $('#emnlp25').appendTo($("#past_confs"));
-            $('#emnlp25 .timer').replaceWith($('#emnlp25 .deadline'));
-            $('#emnlp25 .timer-small').replaceWith($('#emnlp25 .deadline'));
-            $('#emnlp25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#emnlp25', '2025-05-19 23:59:59', 'UTC-12');
 
         // Process iconip2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-05-22 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#iconip2025').attr("diff", diff);
-          $('#iconip2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#iconip2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#iconip2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#iconip2025').addClass('past');
-            $('#iconip2025').appendTo($("#past_confs"));
-            $('#iconip2025 .timer').replaceWith($('#iconip2025 .deadline'));
-            $('#iconip2025 .timer-small').replaceWith($('#iconip2025 .deadline'));
-            $('#iconip2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#iconip2025', '2025-05-22 23:59:59', 'UTC-12');
 
         // Process acml25
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-05-30 23:59:59', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#acml25').attr("diff", diff);
-          $('#acml25 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#acml25 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#acml25 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#acml25').addClass('past');
-            $('#acml25').appendTo($("#past_confs"));
-            $('#acml25 .timer').replaceWith($('#acml25 .deadline'));
-            $('#acml25 .timer-small').replaceWith($('#acml25 .deadline'));
-            $('#acml25 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#acml25', '2025-05-30 23:59:59', 'AoE');
 
         // Process pricai2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-06-27 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#pricai2025').attr("diff", diff);
-          $('#pricai2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#pricai2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#pricai2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#pricai2025').addClass('past');
-            $('#pricai2025').appendTo($("#past_confs"));
-            $('#pricai2025 .timer').replaceWith($('#pricai2025 .deadline'));
-            $('#pricai2025 .timer-small').replaceWith($('#pricai2025 .deadline'));
-            $('#pricai2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#pricai2025', '2025-06-27 23:59:59', 'UTC-12');
 
         // Process wacv26
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-07-18 23:59:59', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#wacv26').attr("diff", diff);
-          $('#wacv26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#wacv26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#wacv26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#wacv26').addClass('past');
-            $('#wacv26').appendTo($("#past_confs"));
-            $('#wacv26 .timer').replaceWith($('#wacv26 .deadline'));
-            $('#wacv26 .timer-small').replaceWith($('#wacv26 .deadline'));
-            $('#wacv26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#wacv26', '2025-07-18 23:59:59', 'AoE');
 
         // Process ijcnlp2025
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-07-28 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#ijcnlp2025').attr("diff", diff);
-          $('#ijcnlp2025 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#ijcnlp2025 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#ijcnlp2025 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#ijcnlp2025').addClass('past');
-            $('#ijcnlp2025').appendTo($("#past_confs"));
-            $('#ijcnlp2025 .timer').replaceWith($('#ijcnlp2025 .deadline'));
-            $('#ijcnlp2025 .timer-small').replaceWith($('#ijcnlp2025 .deadline'));
-            $('#ijcnlp2025 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#ijcnlp2025', '2025-07-28 23:59:59', 'UTC-12');
 
         // Process aaai26
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-08-01 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#aaai26').attr("diff", diff);
-          $('#aaai26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#aaai26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#aaai26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#aaai26').addClass('past');
-            $('#aaai26').appendTo($("#past_confs"));
-            $('#aaai26 .timer').replaceWith($('#aaai26 .deadline'));
-            $('#aaai26 .timer-small').replaceWith($('#aaai26 .deadline'));
-            $('#aaai26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#aaai26', '2025-08-01 23:59:59', 'UTC-12');
 
         // Process icra26
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-09-15 23:59:00', 'UTC-8');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#icra26').attr("diff", diff);
-          $('#icra26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#icra26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icra26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icra26').addClass('past');
-            $('#icra26').appendTo($("#past_confs"));
-            $('#icra26 .timer').replaceWith($('#icra26 .deadline'));
-            $('#icra26 .timer-small').replaceWith($('#icra26 .deadline'));
-            $('#icra26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#icra26', '2025-09-15 23:59:00', 'UTC-8');
 
         // Process iclr26
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-09-25 20:59:59', 'UTC-8');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#iclr26').attr("diff", diff);
-          $('#iclr26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#iclr26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#iclr26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#iclr26').addClass('past');
-            $('#iclr26').appendTo($("#past_confs"));
-            $('#iclr26 .timer').replaceWith($('#iclr26 .deadline'));
-            $('#iclr26 .timer-small').replaceWith($('#iclr26 .deadline'));
-            $('#iclr26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#iclr26', '2025-09-25 20:59:59', 'UTC-8');
 
         // Process aamas26
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-10-08 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#aamas26').attr("diff", diff);
-          $('#aamas26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#aamas26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#aamas26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#aamas26').addClass('past');
-            $('#aamas26').appendTo($("#past_confs"));
-            $('#aamas26 .timer').replaceWith($('#aamas26 .deadline'));
-            $('#aamas26 .timer-small').replaceWith($('#aamas26 .deadline'));
-            $('#aamas26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#aamas26', '2025-10-08 23:59:59', 'UTC-12');
 
         // Process ijcnn2026
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2026-01-31 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#ijcnn2026').attr("diff", diff);
-          $('#ijcnn2026 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#ijcnn2026 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#ijcnn2026 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#ijcnn2026').addClass('past');
-            $('#ijcnn2026').appendTo($("#past_confs"));
-            $('#ijcnn2026 .timer').replaceWith($('#ijcnn2026 .deadline'));
-            $('#ijcnn2026 .timer-small').replaceWith($('#ijcnn2026 .deadline'));
-            $('#ijcnn2026 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#ijcnn2026', '2026-01-31 23:59:59', 'UTC-12');
 
         // Process eccv26
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2026-03-06 13:00:00', 'UTC-8');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#eccv26').attr("diff", diff);
-          $('#eccv26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#eccv26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#eccv26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#eccv26').addClass('past');
-            $('#eccv26').appendTo($("#past_confs"));
-            $('#eccv26 .timer').replaceWith($('#eccv26 .deadline'));
-            $('#eccv26 .timer-small').replaceWith($('#eccv26 .deadline'));
-            $('#eccv26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#eccv26', '2026-03-06 13:00:00', 'UTC-8');
 
         // Process acl26
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('TBD', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#acl26').attr("diff", diff);
-          $('#acl26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#acl26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#acl26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#acl26').addClass('past');
-            $('#acl26').appendTo($("#past_confs"));
-            $('#acl26 .timer').replaceWith($('#acl26 .deadline'));
-            $('#acl26 .timer-small').replaceWith($('#acl26 .deadline'));
-            $('#acl26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#acl26', 'TBD', 'UTC-12');
 
         // Process icpr26
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('TBD', 'AoE');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          
-          $('#icpr26').attr("diff", diff);
-          $('#icpr26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          
-          if (diff > 0) {
-            $('#icpr26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icpr26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icpr26').addClass('past');
-            $('#icpr26').appendTo($("#past_confs"));
-            $('#icpr26 .timer').replaceWith($('#icpr26 .deadline'));
-            $('#icpr26 .timer-small').replaceWith($('#icpr26 .deadline'));
-            $('#icpr26 .calendar').remove();
-          }
-        }
-        
+        setupConferenceCountdown('#icpr26', 'TBD', 'AoE');
+
         // Get subjects from URL/Cache
 var url = new URL(window.location);
 subs = url.searchParams.get("sub");
@@ -4699,73 +3585,13 @@ update_filtering({ subs: subs, all_subs: all_subs });
 })();
 
         // Process EACL 2026
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-10-06 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          $('#eacl26').attr('diff', diff);
-          $('#eacl26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          if (diff > 0) {
-            $('#eacl26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#eacl26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#eacl26').addClass('past');
-            $('#eacl26').appendTo($("#past_confs"));
-            $('#eacl26 .timer').replaceWith($('#eacl26 .deadline'));
-            $('#eacl26 .timer-small').replaceWith($('#eacl26 .deadline'));
-            $('#eacl26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#eacl26', '2025-10-06 23:59:59', 'UTC-12');
 
         // Process LREC 2026
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-10-17 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          $('#lrec26').attr('diff', diff);
-          $('#lrec26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          if (diff > 0) {
-            $('#lrec26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#lrec26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#lrec26').addClass('past');
-            $('#lrec26').appendTo($("#past_confs"));
-            $('#lrec26 .timer').replaceWith($('#lrec26 .deadline'));
-            $('#lrec26 .timer-small').replaceWith($('#lrec26 .deadline'));
-            $('#lrec26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#lrec26', '2025-10-17 23:59:59', 'UTC-12');
 
         // Process ICWSM 2026 (next submission round)
-        if (typeof moment !== 'undefined') {
-          var deadline = moment.tz('2025-09-15 23:59:59', 'UTC-12');
-          var now = moment();
-          var diff = deadline.diff(now, 'seconds');
-          $('#icwsm26').attr('diff', diff);
-          $('#icwsm26 .deadline-time').text(deadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-          if (diff > 0) {
-            $('#icwsm26 .timer').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-            $('#icwsm26 .timer-small').countdown(deadline.toDate(), function(event) {
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            });
-          } else {
-            $('#icwsm26').addClass('past');
-            $('#icwsm26').appendTo($("#past_confs"));
-            $('#icwsm26 .timer').replaceWith($('#icwsm26 .deadline'));
-            $('#icwsm26 .timer-small').replaceWith($('#icwsm26 .deadline'));
-            $('#icwsm26 .calendar').remove();
-          }
-        }
+        setupConferenceCountdown('#icwsm26', '2025-09-15 23:59:59', 'UTC-12');
 
         // Convert displayed deadlines to Europe/London timezone and fix abstract/full labels
         try {
