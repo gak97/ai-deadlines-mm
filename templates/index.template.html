@@ -1,0 +1,195 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>AI Conference Deadlines</title>
+    <meta name="description" content="Countdowns to top CV/NLP/ML/Robotics/AI conference deadlines">
+    <meta name="author" content="Abhishek Das">
+    <link rel="stylesheet" type="text/css" href="/ai-deadlines-mm/static/css/js-year-calendar.min.css?t=1754269186" media="screen,projection">
+
+    <link rel="stylesheet" type="text/css" href="/ai-deadlines-mm/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/ai-deadlines-mm/static/css/deadlines.css?t=1754269186" media="screen,projection">
+    <link rel="stylesheet" type="text/css" href="/ai-deadlines-mm/static/css/calendar.css?t=1754269186" media="screen,projection">
+
+    <link rel="shortcut icon" href="/ai-deadlines-mm/static/img/favicon.png">
+
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/js-year-calendar.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/popper.min.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/jquery.countdown.min.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/moment.min.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/moment-timezone-with-data.min.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/store.min.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/ouical.min.js"></script>
+    <script type="text/javascript" src="/ai-deadlines-mm/static/js/bootstrap-multiselect.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+          <div style="vertical-align: middle; padding-top: 8px;">
+            <div>
+              <a class="navbar-brand" href="/ai-deadlines-mm/" style="border-bottom: none; line-height: 0.1em;">
+              AI Deadlines<br><br>
+              </a>
+            </div>
+            <div style="color: white; font-size: x-small;">
+              <a href="https://paperswithcode.com" class="pwc-link">
+                by
+                <div class="icon-inner pwc-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon"><path d="M88 128h48v256H88zM232 128h48v256h-48zM160 144h48v224h-48zM304 144h48v224h-48zM376 128h48v256h-48z"></path><path d="M104 104V56H16v400h88v-48H64V104zM408 56v48h40v304h-40v48h88V56z"></path></svg></div>
+                Papers With Code
+              </a>
+            </div>
+          </div>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-toggler"
+          aria-controls="navbars-toggler" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-toggler">
+          <ul class="navbar-nav mr-auto">
+            <li>
+              <a href="/ai-deadlines-mm/" class="nav-link" style="border-bottom: none">Countdowns</a>
+            </li>
+            <li>
+              <a href="/ai-deadlines-mm/calendar" class="nav-link" style="border-bottom: none;">Calendar</a>
+            </li>
+          </ul>
+          <div class="twitter-github-icons">
+            <a href="https://twitter.com/share" class="twitter-share-button"
+              data-text="Countdowns to top CV/NLP/ML/Robotics/AI conference deadlines"
+              data-show-count="false" style="font-size: 13px;">Tweet</a>
+            <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+            &nbsp; &nbsp;
+            <iframe
+              src="https://ghbtns.com/github-btn.html?user=gak97&repo=ai-deadlines-mm&type=star&count=true"
+              frameborder="0" scrolling="0" width="95px" height="20px"></iframe>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-12 col-sm-12">
+                  <h1>
+                    AI Conference Deadlines
+                  </h1>
+                </div>
+                <div class="meta col-12">
+                  Countdowns to top CV/NLP/ML/Robotics/AI conference deadlines.
+                  To add/edit a conference, <a target="_blank" href="//github.com/gak97/ai-deadlines-mm">send in a pull request</a>.
+                </div>
+            </div>
+            <br>
+            <div class="row">
+              <form class="container">
+                <div class="row justify-content-center">
+                  <div class="row align-items-md-center col-12 col-10-md">
+                    <div class="col-12 col-md-5 filter-label">
+                      <label for="subject-select" class="align-center" style="margin-bottom: 0px; line-height: 1.5;">
+                        Subject Filter:
+                      </label>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <select
+                        id="subject-select"
+                        name="subject-select"
+                        multiple="multiple"
+                        style="display: none"
+                      >
+                        
+                        <option value="ML" id="ML-checkbox">
+                          Machine Learning (ML)
+                        </option>
+                        
+                        <option value="CV" id="CV-checkbox">
+                          Computer Vision (CV)
+                        </option>
+                        
+                        <option value="CG" id="CG-checkbox">
+                          Computer Graphics (CG)
+                        </option>
+                        
+                        <option value="NLP" id="NLP-checkbox">
+                          Natural Language Proc (NLP)
+                        </option>
+                        
+                        <option value="RO" id="RO-checkbox">
+                          Robotics (RO)
+                        </option>
+                        
+                        <option value="SP" id="SP-checkbox">
+                          Speech/SigProc (SP)
+                        </option>
+                        
+                        <option value="DM" id="DM-checkbox">
+                          Data Mining (DM)
+                        </option>
+                        
+                        <option value="AP" id="AP-checkbox">
+                          Automated Planning (AP)
+                        </option>
+                        
+                        <option value="KR" id="KR-checkbox">
+                          Knowledge Representation (KR)
+                        </option>
+                        
+                        <option value="HCI" id="HCI-checkbox">
+                          Human-Computer Interaction (HCI)
+                        </option>
+                        
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-12">
+                <div class="meta">
+                  Download all deadlines as
+                  <a href="/ai-deadlines-mm/ai-deadlines.ics">.ics</a>.
+                </div>
+              </div>
+            </div>
+        </div>
+        <div id="confs">
+        <div id="coming_confs">
+          
+
+          {{CONFERENCE_CARDS}}
+        <h2 id="past-deadlines-heading" style="margin-top: 24px; display: none;">Past Deadlines</h2>
+        <div id="past_confs">
+          
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="meta">
+              <label class="checkbox-inline">
+                <input type="checkbox" id="sort-order-checkbox"> Show past conferences in chronological order
+              </label>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <footer>
+          <div class="row">
+  <div class="col-12 col-sm-12">
+    <a href="/">aideadlin.es</a>
+    was built and maintained from 2016-2021 by
+    <a href="https://twitter.com/abhshkdz">abhshkdz</a>. It is now run by
+    <a href="https://paperswithcode.com/">Papers With Code</a>.<br>
+  </div>
+</div>
+        </footer>
+    </div>
+    <script type="text/javascript" charset="utf-8">
+{{SCRIPT_CONTENT}}
+</script>
+  </body>
+</html>
