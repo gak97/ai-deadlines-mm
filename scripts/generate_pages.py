@@ -325,9 +325,11 @@ $("#subject-select").multiselect({{
             }} catch (err) {{
               console.log('Error processing conference deadline for', conf.id, err);
               el.find('.calendar').remove();
+              upcoming.push({{ el: el, diff: null, order: index, deadlineMoment: null }});
             }}
           }} else {{
             el.find('.calendar').remove();
+            upcoming.push({{ el: el, diff: null, order: index, deadlineMoment: null }});
           }}
         }});
 
