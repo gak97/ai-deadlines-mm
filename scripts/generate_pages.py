@@ -1,3 +1,4 @@
+import copy
 import json
 import html
 import urllib.parse
@@ -38,9 +39,35 @@ TAG_CLASS_PREFIX = {
 }
 
 
+def expand_submission_rounds(conferences: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    expanded: List[Dict[str, Any]] = []
+    for conf in conferences:
+        rounds = conf.get('submission_rounds') or []
+        if rounds:
+            base_title = conf.get('title', '')
+            base_full_name = conf.get('full_name', '')
+            for idx, round_info in enumerate(rounds):
+                clone = copy.deepcopy(conf)
+                suffix_name = round_info.get('name') or f'Round {idx + 1}'
+                suffix_text = f" ({suffix_name})"
+                clone['id'] = f"{conf['id']}-round-{idx + 1}"
+                if base_title:
+                    clone['title'] = f"{base_title}{suffix_text}"
+                if base_full_name:
+                    clone['full_name'] = f"{base_full_name}{suffix_text}"
+                clone['deadline'] = round_info.get('deadline')
+                clone.pop('submission_rounds', None)
+                expanded.append(clone)
+        else:
+            single = copy.deepcopy(conf)
+            single.pop('submission_rounds', None)
+            expanded.append(single)
+    return expanded
+
+
 def load_conferences() -> List[Dict[str, Any]]:
     data = yaml.safe_load(DATA_PATH.read_text(encoding='utf-8'))
-    return data
+    return expand_submission_rounds(data)
 
 
 def build_conference_card(conf: Dict[str, Any], index: int) -> str:
@@ -52,7 +79,7 @@ def build_conference_card(conf: Dict[str, Any], index: int) -> str:
     date = conf.get('date', '')
     location = conf.get('location', '')
     note = conf.get('note')
-    submission_rounds = conf.get('submission_rounds') or []
+    abstract_deadline = conf.get('abstract_deadline')
     tags = conf.get('tags', [])
 
     classes = ['ConfItem'] + [TAG_CLASS_PREFIX.get(tag, '').strip() for tag in tags if TAG_CLASS_PREFIX.get(tag)]
@@ -80,45 +107,11 @@ def build_conference_card(conf: Dict[str, Any], index: int) -> str:
     tags_html = '\n'.join(tags_html_parts)
 
     note_html = f'                <div class="note">{html.escape(note)}</div>\n' if note else ''
-
-    rounds_data = submission_rounds if submission_rounds else []
-    if not rounds_data and conf.get('deadline'):
-        rounds_data = [
-            {
-                'name': 'Paper Submission',
-                'deadline': conf.get('deadline'),
-            }
-        ]
-
-    round_items = []
-    for round_index, round_info in enumerate(rounds_data):
-        round_name = html.escape(round_info.get('name', f'Round {round_index + 1}'))
-        round_items.append(
-            (
-                "                  <li class=\"deadline-round\" data-round-index=\"{idx}\">\n"
-                "                    <div class=\"round-name\">{name}</div>\n"
-                "                    <div class=\"round-countdown\">\n"
-                "                      <span class=\"round-timer\"></span>\n"
-                "                      <span class=\"round-timer-small\"></span>\n"
-                "                    </div>\n"
-                "                    <div class=\"round-status text-muted\"></div>\n"
-                "                    <div class=\"round-deadline\">\n"
-                "                      Deadline:\n"
-                "                      <span class=\"round-deadline-time\"></span>\n"
-                "                    </div>\n"
-                "                    <div class=\"calendar round-calendar\"></div>\n"
-                "                  </li>"
-            ).format(idx=round_index, name=round_name)
-        )
-
-    if not round_items:
-        round_items.append(
-            "                  <li class=\"deadline-round no-rounds\">\n"
-            "                    <div class=\"round-status text-muted\">Deadline to be announced</div>\n"
-            "                  </li>"
-        )
-
-    rounds_html = '\n'.join(round_items)
+    abstract_html = (
+        f"                <div class=\"abstract-deadline\">Abstract deadline: {html.escape(abstract_deadline)}" "</div>\n"
+        if abstract_deadline
+        else ''
+    )
 
     card = f"""
           <div id="{html.escape(conf_id)}" class="{class_attr}" data-order-index="{index}">
@@ -147,17 +140,17 @@ def build_conference_card(conf: Dict[str, Any], index: int) -> str:
                     <a href="{location_href}">{safe_location}</a>.
                   </span>
                 </div>
-{note_html}                <div class="conf-subjects">
+{note_html}{abstract_html}                <div class="conf-subjects">
 {tags_html}
                 </div>
               </div>
               <div class="col-12 col-sm-6">
                 <div class="deadline">
-                  <div class="current-round-name text-muted"></div>
-                  <ul class="deadline-rounds">
-{rounds_html}
-                  </ul>
+                  <div>Deadline:
+                    <span class="deadline-time"></span>
+                  </div>
                 </div>
+                <div class="calendar"></div>
               </div>
             </div>
             <div class="row">
@@ -230,31 +223,6 @@ function createCalendarFromObject(data) {{
     }},
   }});
 }}
-
-function getSubmissionRounds(conf) {{
-  if (Array.isArray(conf.submission_rounds) && conf.submission_rounds.length > 0) {{
-    return conf.submission_rounds;
-  }}
-  if (conf.deadline) {{
-    return [{{ name: conf.round_label || 'Paper Submission', deadline: conf.deadline }}];
-  }}
-  return [];
-}}
-
-function ensureRoundElement(list, index) {{
-  var existing = list.find('.deadline-round[data-round-index="' + index + '"]');
-  if (existing.length) {{
-    return existing.first();
-  }}
-  var item = $('<li class="deadline-round" data-round-index="' + index + '"></li>');
-  item.append('<div class="round-name"></div>');
-  item.append('<div class="round-countdown"><span class="round-timer"></span><span class="round-timer-small"></span></div>');
-  item.append('<div class="round-status text-muted"></div>');
-  item.append('<div class="round-deadline">Deadline: <span class="round-deadline-time"></span></div>');
-  item.append('<div class="calendar round-calendar"></div>');
-  list.append(item);
-  return item;
-}}
         // Multi-select handler
 $("#subject-select").multiselect({{
   includeSelectAllOption: true,
@@ -321,145 +289,45 @@ $("#subject-select").multiselect({{
           }}
           el.attr('data-order-index', index);
 
-          var list = el.find('.deadline-rounds');
-          if (!list.length) {{
-            list = $('<ul class="deadline-rounds"></ul>');
-            el.find('.deadline').append(list);
-          }}
-
-          var rounds = getSubmissionRounds(conf);
-          var timezone = conf.timezone || 'UTC-12';
-          var now = moment();
-          var summaryTimer = el.find('.conf-row .timer').first();
-          var summaryTimerSmall = el.find('.conf-row .timer-small').first();
-          var summaryLabel = el.find('.current-round-name');
-          var upcomingRound = null;
-          var latestPastRound = null;
-
-          if (rounds.length === 0) {{
-            list.empty().append('<li class="deadline-round no-rounds"><div class="round-status text-muted">Deadline to be announced</div></li>');
-            summaryLabel.text('');
-            summaryTimer.text('Date TBD');
-            summaryTimerSmall.text('');
-            el.removeClass('past');
-            el.attr('data-diff', '');
-            upcoming.push({{ el: el, diff: Number.POSITIVE_INFINITY, order: index, deadlineMoment: null }});
-            return;
-          }}
-
-          var existingRounds = list.find('.deadline-round');
-          if (existingRounds.length > rounds.length) {{
-            existingRounds.slice(rounds.length).remove();
-          }}
-          for (var r = existingRounds.length; r < rounds.length; r++) {{
-            ensureRoundElement(list, r);
-          }}
-          list.find('.deadline-round').each(function(i) {{
-            $(this).attr('data-round-index', i);
-          }});
-
-          rounds.forEach(function(roundInfo, roundIndex) {{
-            var roundName = (roundInfo && roundInfo.name) ? roundInfo.name : ('Round ' + (roundIndex + 1));
-            var roundEl = list.find('.deadline-round[data-round-index="' + roundIndex + '"]');
-            if (!roundEl.length) {{
-              roundEl = ensureRoundElement(list, roundIndex);
-            }}
-            roundEl.find('.round-name').text(roundName);
-            var statusEl = roundEl.find('.round-status');
-            var countdownEl = roundEl.find('.round-countdown');
-            var timerEl = roundEl.find('.round-timer');
-            var timerSmallEl = roundEl.find('.round-timer-small');
-            var deadlineSpan = roundEl.find('.round-deadline-time');
-            var calendarSlot = roundEl.find('.round-calendar');
-            statusEl.text('');
-            deadlineSpan.text('');
-            countdownEl.show();
-            timerEl.show().text('');
-            timerSmallEl.show().text('');
-            calendarSlot.show().empty();
-            roundEl.removeClass('round-past');
-            roundEl.attr('data-diff', '');
-
-            if (!roundInfo || !roundInfo.deadline) {{
-              countdownEl.hide();
-              statusEl.text('Deadline to be announced');
-              calendarSlot.hide();
-              return;
-            }}
-
+          if (conf.deadline) {{
             try {{
-              var confDeadline = moment.tz(roundInfo.deadline, timezone);
-              if (!confDeadline.isValid()) {{
-                countdownEl.hide();
-                statusEl.text('Invalid deadline');
-                calendarSlot.hide();
-                return;
-              }}
+              var timezone = conf.timezone || 'UTC-12';
+              var confDeadline = moment.tz(conf.deadline, timezone);
+              var now = moment();
               var diff = confDeadline.diff(now, 'seconds');
-              roundEl.attr('data-diff', diff);
-              deadlineSpan.text(confDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+              el.attr('data-diff', diff);
+
+              el.find('.deadline-time').text(confDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
 
               var calendarNode = createCalendarFromObject({{
-                id: conf.id + '-round-' + roundIndex,
-                title: conf.title + ' ' + (conf.year || '') + ' ' + roundName + ' deadline',
+                id: conf.id,
+                title: conf.title + ' ' + (conf.year || '') + ' deadline',
                 date: confDeadline.toDate(),
               }});
-              calendarSlot.show().empty().append(calendarNode);
+              el.find('.calendar').empty().append(calendarNode);
 
               if (diff > 0) {{
-                countdownEl.show();
-                timerEl.countdown(confDeadline.toDate(), function(event) {{
+                el.find('.timer').countdown(confDeadline.toDate(), function(event) {{
                   $(this).html(event.strftime('%D days %H:%M:%S'));
                 }});
-                timerSmallEl.countdown(confDeadline.toDate(), function(event) {{
+                el.find('.timer-small').countdown(confDeadline.toDate(), function(event) {{
                   $(this).html(event.strftime('%D days %H:%M:%S'));
                 }});
-                statusEl.text('');
-                roundEl.removeClass('round-past');
-                if (!upcomingRound || diff < upcomingRound.diff) {{
-                  upcomingRound = {{ diff: diff, moment: confDeadline, name: roundName }};
-                }}
+                upcoming.push({{ el: el, diff: diff, order: index, deadlineMoment: confDeadline }});
               }} else {{
-                countdownEl.hide();
-                timerEl.text('');
-                timerSmallEl.text('');
-                statusEl.text('Deadline passed');
-                roundEl.addClass('round-past');
-                if (!latestPastRound || diff > latestPastRound.diff) {{
-                  latestPastRound = {{ diff: diff, moment: confDeadline, name: roundName }};
-                }}
+                var deadlineContent = el.find('.deadline').first().clone();
+                el.find('.timer').replaceWith(deadlineContent.clone());
+                el.find('.timer-small').replaceWith(deadlineContent.clone());
+                el.find('.calendar').remove();
+                el.addClass('past');
+                past.push({{ el: el, diff: diff, order: index, deadlineMoment: confDeadline }});
               }}
             }} catch (err) {{
-              console.log('Error processing conference round for', conf.id, roundName, err);
-              countdownEl.hide();
-              statusEl.text('Deadline unavailable');
-              calendarSlot.hide();
+              console.log('Error processing conference deadline for', conf.id, err);
+              el.find('.calendar').remove();
             }}
-          }});
-
-          summaryTimer.text('');
-          summaryTimerSmall.text('');
-
-          if (upcomingRound) {{
-            summaryLabel.text('Next: ' + upcomingRound.name);
-            summaryTimer.countdown(upcomingRound.moment.toDate(), function(event) {{
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            }});
-            summaryTimerSmall.countdown(upcomingRound.moment.toDate(), function(event) {{
-              $(this).html(event.strftime('%D days %H:%M:%S'));
-            }});
-            el.attr('data-diff', upcomingRound.diff);
-            el.removeClass('past');
-            upcoming.push({{ el: el, diff: upcomingRound.diff, order: index, deadlineMoment: upcomingRound.moment }});
           }} else {{
-            var passedText = latestPastRound ? 'Deadline passed' : 'Date TBD';
-            summaryLabel.text(latestPastRound ? 'Last: ' + latestPastRound.name : '');
-            summaryTimer.text(passedText);
-            summaryTimerSmall.text(passedText);
-            var diffValue = latestPastRound ? latestPastRound.diff : '';
-            el.attr('data-diff', diffValue);
-            el.addClass('past');
-            past.push({{ el: el, diff: diffValue, order: index, deadlineMoment: latestPastRound ? latestPastRound.moment : null }});
+            el.find('.calendar').remove();
           }}
         }});
 
@@ -520,7 +388,7 @@ $("#subject-select").multiselect({{
         }}
 
         try {{
-          $('.ConfItem .round-deadline-time').each(function() {{
+          $('.ConfItem .deadline-time').each(function() {{
             var txt = $(this).text().trim();
             if (!txt) return;
             var m = moment(txt, 'ddd MMM DD YYYY HH:mm:ss [GMT]Z', true);
@@ -529,6 +397,15 @@ $("#subject-select").multiselect({{
             }}
             if (m.isValid()) {{
               $(this).text(m.tz(display_timezone).format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+            }}
+          }});
+
+          $('.ConfItem').each(function() {{
+            var $note = $(this).find('.note');
+            var $abs = $(this).find('.abstract-deadline');
+            var $dtime = $(this).find('.deadline .deadline-time');
+            if ($note.length && $abs.length && $dtime.length) {{
+              $abs.text('Full paper deadline: ' + $dtime.text());
             }}
           }});
         }} catch (e) {{ console.log('Post-processing error', e); }}
@@ -622,16 +499,6 @@ function createCalendarFromObject(data) {{
   }});
 }}
 
-function getSubmissionRounds(conf) {{
-  if (Array.isArray(conf.submission_rounds) && conf.submission_rounds.length > 0) {{
-    return conf.submission_rounds;
-  }}
-  if (conf.deadline) {{
-    return [{{ name: conf.round_label || 'Paper Submission', deadline: conf.deadline }}];
-  }}
-  return [];
-}}
-
         addUtcTimeZones();
         var london_timezone = 'Europe/London';
         var local_timezone = london_timezone;
@@ -690,114 +557,47 @@ function getSubmissionRounds(conf) {{
           $('#conf-note-row').hide();
         }}
 
-        $('#conf-abstract-row').hide();
-
-        var rounds = getSubmissionRounds(data);
-        var timezone = data.timezone || 'UTC-12';
-        var now = moment();
-        var infoContainer = $('#conf-deadline-info');
-        var timerContainer = $('#conf-deadline-timer');
-        infoContainer.empty();
-        timerContainer.empty();
-
-        var nextRound = null;
-
-        if (!rounds.length) {{
-          infoContainer.hide();
-          timerContainer.hide();
+        if (data.abstract_deadline) {{
+          $('#conf-abstract-row').show();
+          $('#conf-abstract-text').text('Abstract deadline: ' + data.abstract_deadline);
         }} else {{
-          infoContainer.show();
-          timerContainer.show();
-          rounds.forEach(function(roundInfo, idx) {{
-            var roundName = (roundInfo && roundInfo.name) ? roundInfo.name : ('Round ' + (idx + 1));
-            var roundRow = $('<div class="conf-round-row row" data-round-index="' + idx + '"></div>');
-            roundRow.append('<div class="meta deadline col-12 col-md-6">Download ' + roundName + ' deadline:</div>');
-            var calendarCell = $('<div class="calendar meta col-sm-12 col-md-6 round-calendar" data-round-index="' + idx + '"></div>');
-            roundRow.append(calendarCell);
-            roundRow.append('<div class="meta deadline col-12 col-md-6">Deadline in conference timezone:</div>');
-            var confTimeCell = $('<div class="meta col-sm-12 col-md-6"><span class="round-deadline-time" data-round-index="' + idx + '"></span></div>');
-            roundRow.append(confTimeCell);
-            roundRow.append('<div class="meta deadline col-12 col-md-6">Deadline in ' + local_timezone + ' timezone:</div>');
-            var localTimeCell = $('<div class="local-timezone-hide meta col-sm-12 col-md-6"><span class="round-local-time" data-round-index="' + idx + '"></span></div>');
-            roundRow.append(localTimeCell);
-            infoContainer.append(roundRow);
-
-            var timerRow = $('<div class="conf-round-timer col-12" data-round-index="' + idx + '"></div>');
-            timerRow.append('<div class="round-timer-label">' + roundName + ' countdown:</div>');
-            timerRow.append('<div class="round-timer-display" data-round-index="' + idx + '"></div>');
-            timerContainer.append(timerRow);
-          }});
-
-          rounds.forEach(function(roundInfo, idx) {{
-            var roundName = (roundInfo && roundInfo.name) ? roundInfo.name : ('Round ' + (idx + 1));
-            var timeSpan = infoContainer.find('.round-deadline-time[data-round-index="' + idx + '"]');
-            var localSpan = infoContainer.find('.round-local-time[data-round-index="' + idx + '"]');
-            var calendarSlot = infoContainer.find('.round-calendar[data-round-index="' + idx + '"]');
-            var timerDisplay = timerContainer.find('.round-timer-display[data-round-index="' + idx + '"]');
-            if (!roundInfo || !roundInfo.deadline) {{
-              timeSpan.text('Date TBD');
-              localSpan.text('');
-              calendarSlot.hide();
-              timerDisplay.text('Deadline to be announced');
-              return;
-            }}
-            try {{
-              var confDeadline = moment.tz(roundInfo.deadline, timezone);
-              if (!confDeadline.isValid()) {{
-                timeSpan.text('Invalid deadline');
-                localSpan.text('');
-                calendarSlot.hide();
-                timerDisplay.text('Invalid deadline');
-                return;
-              }}
-              timeSpan.text(confDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-              try {{
-                var localDeadline = moment.tz(confDeadline, local_timezone);
-                localSpan.text(localDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
-              }} catch (err) {{
-                console.log('Error converting to local timezone for conference detail', err);
-              }}
-              var calendarNode = createCalendarFromObject({{
-                id: data.id + '-round-' + idx,
-                title: data.title + ' ' + (data.year || '') + ' ' + roundName + ' deadline',
-                date: confDeadline.toDate(),
-              }});
-              calendarSlot.show().empty().append(calendarNode);
-              var diff = confDeadline.diff(now, 'seconds');
-              if (diff > 0) {{
-                timerDisplay.countdown(confDeadline.toDate(), function(event) {{
-                  $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
-                }});
-                if (!nextRound || diff < nextRound.diff) {{
-                  nextRound = {{ diff: diff, moment: confDeadline, name: roundName }};
-                }}
-              }} else {{
-                timerDisplay.text('Deadline passed');
-              }}
-            }} catch (err) {{
-              console.log('Error rendering detail deadline for', data.id, roundName, err);
-              timeSpan.text('Date unavailable');
-              localSpan.text('');
-              calendarSlot.hide();
-              timerDisplay.text('Date unavailable');
-            }}
-          }});
-
-          if (!nextRound) {{
-            timerContainer.find('.round-timer-display').each(function() {{
-              if (!$(this).text()) {{
-                $(this).text('Deadline passed');
-              }}
-            }});
-          }}
+          $('#conf-abstract-row').hide();
         }}
 
-        var twitterText = 'Countdown to the ' + data.title + ' ' + (data.year || '') + ' deadline!';
-        if (nextRound && nextRound.name) {{
-          twitterText = 'Countdown to the ' + nextRound.name + ' deadline for ' + data.title + ' ' + (data.year || '') + '!';
-        }}
-        var twitter_slug = '<a href="https://twitter.com/share" class="twitter-share-button" data-text="' + twitterText + '" data-show-count="false" style="font-size:13px;">Tweet</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8">';
+        var twitter_slug = '<a href="https://twitter.com/share" class="twitter-share-button" data-text="Countdown to the ' + data.title + ' ' + (data.year || '') + ' deadline!" data-show-count="false" style="font-size:13px;">Tweet</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8">';
         $('#twitter-box').html(twitter_slug);
+
+        if (data.deadline) {{
+          try {{
+            var tz = data.timezone || 'UTC-12';
+            var confDeadline = moment.tz(data.deadline, tz);
+            var calendarNode = createCalendarFromObject({{
+              id: data.id,
+              title: data.title + ' ' + (data.year || '') + ' deadline',
+              date: confDeadline.toDate(),
+            }});
+            document.querySelector('#conference-deadline').appendChild(calendarNode);
+
+            $('#conf-timer').countdown(confDeadline.toDate(), function(event) {{
+              $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
+            }});
+            $('.deadline-time').text(confDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+
+            try {{
+              var localConfDeadline = moment.tz(confDeadline, local_timezone);
+              $('.deadline-local-time').text(localConfDeadline.format('ddd MMM DD YYYY HH:mm:ss [GMT]Z'));
+            }} catch(err) {{
+              console.log('Error converting to local timezone.');
+            }}
+          }} catch (err) {{
+            console.log('Error rendering deadline for', data.id, err);
+            $('#conf-deadline-info').hide();
+            $('#conf-deadline-timer').hide();
+          }}
+        }} else {{
+          $('#conf-deadline-info').hide();
+          $('#conf-deadline-timer').hide();
+        }}
 
     }});
     """
