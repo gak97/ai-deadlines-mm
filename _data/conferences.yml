@@ -61,6 +61,11 @@
   - AP
   - KR
   note: Abstract deadline on August 7, 2024.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2024-08-07 23:59:59'
+  - name: Paper Submission
+    deadline: '2024-08-15 23:59:59'
   abstract_deadline: '2024-08-07 23:59:59'
   deadline: '2024-08-15 23:59:59'
   timezone: UTC-12
@@ -107,6 +112,11 @@
   tags:
   - ML
   note: Abstract deadline on September 27, 2024.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2024-09-27 23:59:59'
+  - name: Paper Submission
+    deadline: '2024-10-01 23:59:59'
   abstract_deadline: '2024-09-27 23:59:59'
   deadline: '2024-10-01 23:59:59'
   timezone: UTC-12
@@ -120,6 +130,11 @@
   tags:
   - ML
   note: Abstract deadline on October 3, 2024.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2024-10-03 23:59:59'
+  - name: Paper Submission
+    deadline: '2024-10-10 23:59:59'
   abstract_deadline: '2024-10-03 23:59:59'
   deadline: '2024-10-10 23:59:59'
   timezone: UTC-12
@@ -147,6 +162,11 @@
   - AP
   - ML
   note: Abstract deadline on October 9, 2024.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2024-10-09 23:59:59'
+  - name: Paper Submission
+    deadline: '2024-10-16 23:59:59'
   abstract_deadline: '2024-10-09 23:59:59'
   deadline: '2024-10-16 23:59:59'
   timezone: UTC-12
@@ -160,6 +180,11 @@
   tags:
   - AP
   note: Abstract deadline on October 25, 2024.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2024-10-25 23:59:59'
+  - name: Paper Submission
+    deadline: '2024-11-01 23:59:59'
   abstract_deadline: '2024-10-25 23:59:59'
   deadline: '2024-11-01 23:59:59'
   timezone: UTC-12
@@ -173,6 +198,11 @@
   tags:
   - CV
   note: Mandatory paper registration deadline on November 07, 2023.
+  submission_rounds:
+  - name: Paper Registration
+    deadline: '2024-11-07 23:59:00'
+  - name: Paper Submission
+    deadline: '2024-11-14 23:59:00'
   abstract_deadline: '2024-11-07 23:59:00'
   deadline: '2024-11-14 23:59:00'
   timezone: UTC-8
@@ -186,6 +216,11 @@
   location: Bruges, Belgium
   tags:
   - ML
+  submission_rounds:
+  - name: Abstract
+    deadline: '2024-11-20 00:00:00'
+  - name: Paper Submission
+    deadline: '2024-11-20 00:00:00'
   abstract_deadline: '2024-11-20 00:00:00'
   deadline: '2024-11-20 00:00:00'
   timezone: UTC-8
@@ -223,6 +258,11 @@
   - AP
   - KR
   note: Abstract deadline on January 16, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-01-16 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-01-23 23:59:59'
   abstract_deadline: '2025-01-16 23:59:59'
   deadline: '2025-01-23 23:59:59'
   timezone: UTC-12
@@ -236,6 +276,11 @@
   tags:
   - RO
   note: Abstract deadline on January 17, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-01-17 23:59:00'
+  - name: Paper Submission
+    deadline: '2025-01-24 23:59:00'
   abstract_deadline: '2025-01-17 23:59:00'
   deadline: '2025-01-24 23:59:00'
   timezone: AoE
@@ -249,6 +294,11 @@
   tags:
   - ML
   note: Abstract deadline on January 22, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-01-22 23:59:00'
+  - name: Paper Submission
+    deadline: '2025-01-29 23:59:00'
   abstract_deadline: '2025-01-22 23:59:00'
   deadline: '2025-01-29 23:59:00'
   timezone: AoE
@@ -262,6 +312,11 @@
   tags:
   - ML
   note: Abstract deadline on January 23, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-01-23 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-01-30 23:59:59'
   abstract_deadline: '2025-01-23 23:59:59'
   deadline: '2025-01-30 23:59:59'
   timezone: UTC-12
@@ -331,6 +386,11 @@
   tags:
   - CV
   note: Abstract deadline on February 28, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-02-28 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-03-07 23:59:59'
   abstract_deadline: '2025-02-28 23:59:59'
   deadline: '2025-03-07 23:59:59'
   timezone: UTC+0
@@ -344,6 +404,11 @@
   tags:
   - CV
   note: Abstract deadline on March 4, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-03-04 09:59:59'
+  - name: Paper Submission
+    deadline: '2025-03-08 09:59:59'
   abstract_deadline: '2025-03-04 09:59:59'
   deadline: '2025-03-08 09:59:59'
   timezone: UTC-12
@@ -391,6 +456,11 @@
   tags:
   - NLP
   note: Abstract deadline on March 22, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-03-22 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-03-28 23:59:59'
   abstract_deadline: '2025-03-22 23:59:59'
   deadline: '2025-03-28 23:59:59'
   timezone: AoE
@@ -463,6 +533,11 @@
   - AP
   - KR
   note: Abstract deadline on April 29, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-04-29 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-05-06 23:59:59'
   abstract_deadline: '2025-04-29 23:59:59'
   deadline: '2025-05-06 23:59:59'
   timezone: UTC-12
@@ -477,6 +552,11 @@
   tags:
   - KR
   note: Abstract deadline on May 7, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-05-07 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-05-12 23:59:59'
   abstract_deadline: '2025-05-07 23:59:59'
   deadline: '2025-05-12 23:59:59'
   timezone: UTC-12
@@ -490,6 +570,11 @@
   tags:
   - ML
   note: Abstract deadline on May 11, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-05-11 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-05-15 23:59:59'
   abstract_deadline: '2025-05-11 23:59:59'
   deadline: '2025-05-15 23:59:59'
   timezone: AoE
@@ -503,6 +588,11 @@
   tags:
   - CV
   note: Abstract deadline on May 13, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-05-13 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-05-16 23:59:59'
   abstract_deadline: '2025-05-13 23:59:59'
   deadline: '2025-05-16 23:59:59'
   timezone: UTC+0
@@ -562,6 +652,11 @@
   tags:
   - CV
   note: Abstract deadline on July 11, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-07-11 23:59:00'
+  - name: Paper Submission
+    deadline: '2025-07-18 23:59:59'
   abstract_deadline: '2025-07-11 23:59:00'
   deadline: '2025-07-18 23:59:59'
   timezone: AoE
@@ -588,6 +683,11 @@
   - AP
   - KR
   note: Abstract deadline on July 25, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-07-25 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-08-01 23:59:59'
   abstract_deadline: '2025-07-25 23:59:59'
   deadline: '2025-08-01 23:59:59'
   timezone: UTC-12
@@ -612,6 +712,11 @@
   tags:
   - ML
   note: Abstract deadline on September 20, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-09-25 20:59:59'
+  - name: Paper Submission
+    deadline: '2025-09-25 20:59:59'
   abstract_deadline: '2025-09-25 20:59:59'
   deadline: '2025-09-25 20:59:59'
   timezone: UTC-8
@@ -626,6 +731,11 @@
   - AP
   - ML
   note: Abstract deadline on October 1, 2025.
+  submission_rounds:
+  - name: Abstract
+    deadline: '2025-10-01 23:59:59'
+  - name: Paper Submission
+    deadline: '2025-10-08 23:59:59'
   abstract_deadline: '2025-10-01 23:59:59'
   deadline: '2025-10-08 23:59:59'
   timezone: UTC-12

@@ -186,6 +186,105 @@ footer {
   display: none;
 }
 
+.deadline-rounds {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.deadline-round {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #efefef;
+}
+
+.deadline-round:last-child {
+  border-bottom: none;
+}
+
+.deadline-round .round-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.deadline-round .round-countdown {
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 0.35rem;
+}
+
+.deadline-round .round-status {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.deadline-round .round-deadline {
+  font-size: 0.9rem;
+  margin-top: 0.35rem;
+}
+
+.deadline-round .round-calendar {
+  margin-top: 0.5rem;
+}
+
+.deadline-round.round-past {
+  opacity: 0.85;
+}
+
+.deadline-round.no-rounds {
+  font-style: italic;
+  color: #666;
+}
+
+.current-round-name {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  color: #666;
+}
+
+.round-timer,
+.round-timer-small {
+  display: inline-block;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.round-timer-small {
+  display: none;
+}
+
+@media (max-width: 576px) {
+  .round-timer {
+    display: none;
+  }
+
+  .round-timer-small {
+    display: inline-block;
+  }
+}
+
+.conf-round-row {
+  margin-bottom: 1.5rem;
+}
+
+.conf-round-timer {
+  margin-bottom: 1.5rem;
+}
+
+.conf-round-timer .round-timer-label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.conf-round-timer .round-timer-display {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.1rem;
+  color: #333;
+}
+
 #conf-timer {
   font-size: 72px;
   color: #444;
